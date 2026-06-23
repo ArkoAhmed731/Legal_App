@@ -61,7 +61,7 @@ export async function seedDatabase() {
   try {
     console.log("Starting database seed...");
 
-    const adminPassword = await bcrypt.hash("Shakalaka69", 12);
+    const adminPassword = await bcrypt.hash("TestTest123!", 12);
     const adminAccounts = [
       {
         id: "admin-superadmin",

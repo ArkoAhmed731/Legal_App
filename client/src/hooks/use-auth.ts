@@ -61,7 +61,7 @@ async function fetchUser(): Promise<AuthUser | null> {
 }
 
 async function logout(): Promise<void> {
-  await fetch("/api/logout", { credentials: "include" });
+  await fetch("/api/logout", { method: "POST", credentials: "include" });
   window.location.href = "/";
 }
 

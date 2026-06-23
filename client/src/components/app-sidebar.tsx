@@ -48,13 +48,14 @@ const roleBadgeStyles: Record<string, string> = {
 function useNavigate() {
   return (path: string) => {
     window.history.pushState(null, "", path);
+    window.dispatchEvent(new PopStateEvent("popstate"));
   };
 }
 
 export function AppSidebar() {
   const [location] = useLocation();
   const navigate = useNavigate();
-  const { user, role, isAdmin, isLawyer, hasFeature, isPendingVerification } = useAuth();
+  const { user, role, isAdmin, isLawyer, hasFeature, isPendingVerification, logout } = useAuth();
 
   const currentPath = window.location.pathname;
 
@@ -97,7 +98,10 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => navigate("/dashboard")}
+        >
           <Scale className="h-6 w-6 text-sidebar-primary" />
           <span className="font-serif text-lg font-bold text-sidebar-foreground">
             Bichar Bebostha
@@ -230,9 +234,14 @@ export function AppSidebar() {
             >
               <UserPen className="h-4 w-4 text-sidebar-foreground/50" />
             </Button>
-            <a href="/api/logout" data-testid="button-logout">
-              <LogOut className="h-4 w-4 text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors" />
-            </a>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => logout()}
+              data-testid="button-logout"
+            >
+              <LogOut className="h-4 w-4 text-sidebar-foreground/50" />
+            </Button>
           </div>
         </div>
       </SidebarFooter>
