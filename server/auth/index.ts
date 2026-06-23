@@ -73,17 +73,19 @@ export function setupAuth(app: Express): void {
 export function registerAuthRoutes(app: Express): void {
   app.post("/api/auth/register", async (req, res) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password, firstName, lastName, role } = req.body;
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
       }
+      const profileRole: "client" | "professional" =
+        role === "professional" ? "professional" : "client";
       const [existing] = await db.select().from(users).where(eq(users.email, email));
       if (existing) {
         return res.status(409).json({ message: "Email already registered" });
       }
       const passwordHash = await bcrypt.hash(password, 12);
       const user = await storage.upsertUser({ email, firstName, lastName, passwordHash });
-      await storage.upsertUserProfile({ userId: user.id, role: "client" });
+      await storage.upsertUserProfile({ userId: user.id, role: profileRole });
 
       req.login(user, (err) => {
         if (err) return res.status(500).json({ message: "Login after registration failed" });

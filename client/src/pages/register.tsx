@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Scale, UserPlus } from "lucide-react";
+import { Scale, UserPlus, User, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { queryClient } from "@/lib/queryClient";
 
+type AccountType = "client" | "professional";
+
 export default function RegisterPage() {
+  const [accountType, setAccountType] = useState<AccountType>("client");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -36,7 +39,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, firstName, lastName }),
+        body: JSON.stringify({ email, password, firstName, lastName, role: accountType }),
         credentials: "include",
       });
 
@@ -95,6 +98,45 @@ export default function RegisterPage() {
                   {error}
                 </div>
               )}
+
+              {/* Account type selector */}
+              <div className="space-y-2">
+                <Label>I am a</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAccountType("client")}
+                    data-testid="button-type-client"
+                    className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 text-sm font-medium transition-colors focus:outline-none
+                      ${accountType === "client"
+                        ? "border-accent bg-accent/10 text-accent"
+                        : "border-border text-muted-foreground hover:border-accent/50 hover:text-foreground"
+                      }`}
+                  >
+                    <User className="h-6 w-6" />
+                    <span>Client</span>
+                    <span className="text-[11px] font-normal text-center leading-tight opacity-70">
+                      Seeking legal help
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAccountType("professional")}
+                    data-testid="button-type-lawyer"
+                    className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 text-sm font-medium transition-colors focus:outline-none
+                      ${accountType === "professional"
+                        ? "border-accent bg-accent/10 text-accent"
+                        : "border-border text-muted-foreground hover:border-accent/50 hover:text-foreground"
+                      }`}
+                  >
+                    <Briefcase className="h-6 w-6" />
+                    <span>Lawyer</span>
+                    <span className="text-[11px] font-normal text-center leading-tight opacity-70">
+                      Providing legal services
+                    </span>
+                  </button>
+                </div>
+              </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
@@ -166,7 +208,7 @@ export default function RegisterPage() {
                 disabled={loading}
                 data-testid="button-register"
               >
-                {loading ? "Creating account..." : "Create Account"}
+                {loading ? "Creating account..." : `Create ${accountType === "professional" ? "Lawyer" : "Client"} Account`}
               </Button>
 
               <p className="text-center text-sm text-muted-foreground">
