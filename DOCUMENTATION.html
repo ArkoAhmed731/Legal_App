@@ -1,0 +1,3345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UniCortex Platform Documentation</title>
+  <style>
+    @media print {
+      body { font-size: 11pt; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      table { page-break-inside: avoid; }
+      pre { page-break-inside: avoid; }
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+    h1 { color: #1a2942; border-bottom: 3px solid #f59e0b; padding-bottom: 8px; margin-top: 48px; font-size: 28px; }
+    h2 { color: #1a2942; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; margin-top: 36px; font-size: 22px; }
+    h3 { color: #374151; margin-top: 24px; font-size: 18px; }
+    h4 { color: #4b5563; margin-top: 16px; font-size: 15px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+    th { background: #1a2942; color: white; padding: 10px 12px; text-align: left; font-weight: 600; }
+    td { border: 1px solid #d1d5db; padding: 8px 12px; }
+    tr:nth-child(even) { background: #f9fafb; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; font-family: 'Fira Code', 'Consolas', monospace; }
+    pre { background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; color: inherit; padding: 0; }
+    blockquote { border-left: 4px solid #f59e0b; margin: 16px 0; padding: 12px 20px; background: #fffbeb; }
+    a { color: #2563eb; }
+    hr { border: none; border-top: 2px solid #e5e7eb; margin: 32px 0; }
+    ul, ol { padding-left: 24px; }
+    li { margin: 4px 0; }
+    .title-page { text-align: center; padding: 120px 0 80px; }
+    .title-page h1 { border: none; font-size: 42px; color: #1a2942; margin-bottom: 8px; }
+    .title-page p { color: #6b7280; font-size: 16px; }
+    .print-btn {
+      position: fixed; top: 20px; right: 20px; background: #1a2942; color: white;
+      border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;
+      font-size: 15px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    .print-btn:hover { background: #f59e0b; color: #1a2942; }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">Save as PDF</button>
+  <div class="title-page">
+    <h1 style="page-break-before: avoid;">UniCortex Platform</h1>
+    <p style="font-size: 20px; color: #374151;">Complete Technical Documentation</p>
+    <p>Multi-Tenant SaaS Platform for Professional Services</p>
+    <p style="margin-top: 40px; color: #9ca3af;">February 2026</p>
+  </div>
+  <hr>
+  <h1>UniCortex Platform Documentation</h1>
+<hr>
+<h2>Table of Contents</h2>
+<ol>
+<li><a href="#1-platform-overview">Platform Overview</a></li>
+<li><a href="#2-tech-stack">Tech Stack</a></li>
+<li><a href="#3-project-structure">Project Structure</a></li>
+<li><a href="#4-multi-tenant-architecture">Multi-Tenant Architecture</a></li>
+<li><a href="#5-authentication-system">Authentication System</a></li>
+<li><a href="#6-role-based-access-control">Role-Based Access Control</a></li>
+<li><a href="#7-database-schema">Database Schema</a></li>
+<li><a href="#8-api-reference">API Reference</a></li>
+<li><a href="#9-frontend-pages--routing">Frontend Pages &amp; Routing</a></li>
+<li><a href="#10-sidebar--navigation">Sidebar &amp; Navigation</a></li>
+<li><a href="#11-professional-verification-flow">Professional Verification Flow</a></li>
+<li><a href="#12-ai-chat-service">AI Chat Service</a></li>
+<li><a href="#13-document-management-system">Document Management System</a></li>
+<li><a href="#14-appointment--booking-system">Appointment &amp; Booking System</a></li>
+<li><a href="#15-video-library">Video Library</a></li>
+<li><a href="#16-object-storage">Object Storage</a></li>
+<li><a href="#17-audit-logging">Audit Logging</a></li>
+<li><a href="#18-user-flows">User Flows</a></li>
+<li><a href="#19-environment-variables--secrets">Environment Variables &amp; Secrets</a></li>
+<li><a href="#20-seeded-data">Seeded Data</a></li>
+</ol>
+<hr>
+<h2>1. Platform Overview</h2>
+<p>UniCortex is a production-ready multi-tenant SaaS platform designed to serve multiple professional verticals. Each tenant operates as an independent application with its own URL path, feature set, branding, and data isolation.</p>
+<h3>Supported Verticals</h3>
+<table>
+<thead>
+<tr>
+<th>Vertical</th>
+<th>Tenant Slug</th>
+<th>Status</th>
+<th>Professional Label</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Law</td>
+<td><code>law</code></td>
+<td>Active</td>
+<td>Lawyer</td>
+<td>AI-powered legal education, verified lawyer directory, appointment booking, document generation, educational video library</td>
+</tr>
+<tr>
+<td>Psychology</td>
+<td><code>psychology</code></td>
+<td>Disabled</td>
+<td>Therapist</td>
+<td>AI-powered mental wellness education, verified therapist directory, session booking, wellness video library</td>
+</tr>
+</tbody></table>
+<h3>Key Capabilities</h3>
+<ul>
+<li><strong>AI-Powered Education</strong>: OpenAI-driven chat assistant providing educational information (not advice) with streaming responses</li>
+<li><strong>Verified Professional Directory</strong>: Browse professionals filtered by specialty, rating, and availability</li>
+<li><strong>Appointment Booking</strong>: Book consultations with verified professionals</li>
+<li><strong>Document Generation</strong>: AI-drafted legal documents with lawyer review workflow</li>
+<li><strong>Educational Video Library</strong>: Categorized video content per tenant vertical</li>
+<li><strong>Professional Verification</strong>: Multi-step onboarding with license and ID document upload, admin approval workflow</li>
+<li><strong>Multi-Tenant Isolation</strong>: Complete data separation between tenants with per-tenant feature flags</li>
+<li><strong>Comprehensive RBAC</strong>: Four-tier role system (superadmin, tenant_admin, professional, client)</li>
+<li><strong>Audit Trail</strong>: All privileged actions logged with actor, action, resource, and metadata</li>
+</ul>
+<hr>
+<h2>2. Tech Stack</h2>
+<h3>Frontend</h3>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>React 18.3</td>
+<td>UI framework</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>Type safety</td>
+</tr>
+<tr>
+<td>Vite</td>
+<td>Build tool and dev server</td>
+</tr>
+<tr>
+<td>Wouter</td>
+<td>Lightweight client-side routing</td>
+</tr>
+<tr>
+<td>TanStack Query (React Query) v5</td>
+<td>Server state management and data fetching</td>
+</tr>
+<tr>
+<td>Shadcn/UI + Radix UI</td>
+<td>Accessible component library (45+ components)</td>
+</tr>
+<tr>
+<td>Tailwind CSS v3</td>
+<td>Utility-first styling</td>
+</tr>
+<tr>
+<td>next-themes</td>
+<td>Dark/light mode support</td>
+</tr>
+<tr>
+<td>Framer Motion</td>
+<td>Animations</td>
+</tr>
+<tr>
+<td>React Hook Form + Zod</td>
+<td>Form handling and validation</td>
+</tr>
+<tr>
+<td>Lucide React</td>
+<td>Icon library</td>
+</tr>
+</tbody></table>
+<h3>Backend</h3>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Express.js 5.0</td>
+<td>HTTP server</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>Type safety</td>
+</tr>
+<tr>
+<td>Drizzle ORM</td>
+<td>Type-safe database queries</td>
+</tr>
+<tr>
+<td>PostgreSQL (Neon)</td>
+<td>Primary database</td>
+</tr>
+<tr>
+<td>Passport.js</td>
+<td>OIDC authentication strategy</td>
+</tr>
+<tr>
+<td>bcryptjs</td>
+<td>Password hashing for admin accounts</td>
+</tr>
+<tr>
+<td>OpenAI SDK</td>
+<td>AI chat and document generation</td>
+</tr>
+<tr>
+<td>Google Cloud Storage</td>
+<td>File/document storage</td>
+</tr>
+<tr>
+<td>connect-pg-simple</td>
+<td>PostgreSQL session store</td>
+</tr>
+</tbody></table>
+<h3>Shared</h3>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Drizzle-Zod</td>
+<td>Schema-to-validator generation</td>
+</tr>
+<tr>
+<td>Zod</td>
+<td>Runtime validation</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Project Structure</h2>
+<pre><code>unicortex/
++-- package.json                   # Dependencies and npm scripts
++-- tsconfig.json                  # TypeScript config with path aliases
++-- vite.config.ts                 # Vite bundler config (DO NOT MODIFY)
++-- drizzle.config.ts              # Database migration config (DO NOT MODIFY)
++-- tailwind.config.ts             # Tailwind theme config
++-- postcss.config.js              # PostCSS config
++-- components.json                # Shadcn/UI config
++-- replit.md                      # Project summary for AI context
++-- DOCUMENTATION.md               # This file
+|
++-- client/                        # Frontend application
+|   +-- index.html                 # HTML entry point
+|   +-- public/
+|   |   +-- favicon.png
+|   |   +-- images/                # Static assets (hero images, patterns, testimonials)
+|   +-- src/
+|       +-- main.tsx               # React entry point
+|       +-- App.tsx                # Root router with multi-tenant routing
+|       +-- index.css              # Global styles and CSS variables
+|       +-- pages/                 # 21 page components
+|       |   +-- landing.tsx             # Public landing page
+|       |   +-- dashboard.tsx           # User dashboard
+|       |   +-- role-selection.tsx       # First-time role picker + profile info
+|       |   +-- admin-login.tsx         # Admin email/password login
+|       |   +-- ai-chat.tsx             # AI assistant chat interface
+|       |   +-- lawyers.tsx             # Professional directory browser
+|       |   +-- lawyer-profile.tsx      # Individual professional profile
+|       |   +-- bookings.tsx            # Client appointment management
+|       |   +-- documents.tsx           # Document generation/management
+|       |   +-- documents-review.tsx    # Document review workflow (admin/lawyer)
+|       |   +-- videos.tsx              # Educational video library
+|       |   +-- register-lawyer.tsx     # Professional registration with doc upload
+|       |   +-- lawyer-appointments.tsx # Professional&#39;s appointment view
+|       |   +-- lawyer-review.tsx       # Lawyer document review page
+|       |   +-- edit-profile.tsx        # Profile editor + account deletion
+|       |   +-- admin.tsx               # Tenant admin dashboard
+|       |   +-- admin-users.tsx         # User management (roles, verification)
+|       |   +-- analytics.tsx           # Admin analytics/metrics
+|       |   +-- audit-logs.tsx          # Audit log viewer
+|       |   +-- tenant-management.tsx   # Superadmin tenant CRUD
+|       |   +-- portal.tsx              # Legacy portal (unused)
+|       |   +-- not-found.tsx           # 404 page
+|       +-- components/
+|       |   +-- app-sidebar.tsx         # Dynamic role/feature-aware sidebar
+|       |   +-- theme-provider.tsx      # Dark/light mode provider
+|       |   +-- theme-toggle.tsx        # Theme toggle button
+|       |   +-- ObjectUploader.tsx      # File upload component
+|       |   +-- tenant-link.tsx         # Tenant-aware navigation helper
+|       |   +-- verification-lock.tsx   # Lock screen for unverified professionals
+|       |   +-- ui/                     # 45+ Shadcn/UI components
+|       +-- hooks/
+|       |   +-- use-auth.ts             # Auth context, role checks, feature flags
+|       |   +-- use-tenant.ts           # Tenant context (slug, basePath)
+|       |   +-- use-toast.ts            # Toast notification hook
+|       |   +-- use-mobile.tsx          # Mobile device detection
+|       |   +-- use-upload.ts           # File upload hook
+|       +-- lib/
+|           +-- queryClient.ts          # TanStack Query config + tenant header injection
+|           +-- tenant-config.ts        # Per-tenant display configuration
+|           +-- auth-utils.ts           # Auth utilities
+|           +-- utils.ts               # General utilities (cn, etc.)
+|
++-- server/                        # Backend application
+|   +-- index.ts                   # Express setup, tenant middleware, auth, seed
+|   +-- routes.ts                  # All API endpoints with RBAC + feature gates
+|   +-- storage.ts                 # DatabaseStorage class (all DB queries)
+|   +-- db.ts                      # PostgreSQL connection
+|   +-- ai-service.ts             # OpenAI integration (chat + document drafting)
+|   +-- seed.ts                    # Database seeding (tenants, lawyers, docs, videos)
+|   +-- static.ts                  # Static file serving
+|   +-- vite.ts                    # Vite dev server integration (DO NOT MODIFY)
+|   +-- replit_integrations/
+|       +-- auth/
+|       |   +-- index.ts
+|       |   +-- routes.ts          # /api/auth/* endpoints
+|       |   +-- replitAuth.ts      # Passport.js OIDC strategy
+|       |   +-- storage.ts         # Auth-specific DB queries
+|       +-- chat/                  # Audio conversation integration
+|       +-- image/                 # Image generation integration
+|       +-- audio/                 # Voice generation integration
+|       +-- object_storage/        # GCS file storage integration
+|       +-- batch/                 # Batch processing utilities
+|
++-- shared/                        # Shared models and schemas
+|   +-- schema.ts                  # Re-exports all models
+|   +-- models/
+|       +-- auth.ts                # users, sessions tables (global)
+|       +-- law.ts                 # Domain tables with tenant_id columns
+|       +-- chat.ts                # Basic conversation/message tables
+|       +-- tenant.ts              # tenants, auditLogs, config interfaces
+|
++-- script/
+|   +-- build.ts                   # Custom ESBuild script for backend
+|
++-- migrations/                    # Drizzle ORM migration files
++-- attached_assets/               # Reference documents and screenshots
+</code></pre>
+<hr>
+<h2>4. Multi-Tenant Architecture</h2>
+<h3>Tenant Resolution</h3>
+<p>Every HTTP request goes through tenant resolution middleware defined in <code>server/index.ts</code>:</p>
+<ol>
+<li>The middleware reads the <code>X-Tenant-ID</code> header from the request</li>
+<li>If no header is present, it defaults to <code>&quot;law&quot;</code></li>
+<li>The middleware queries the database to verify the tenant exists and has <code>status = &quot;active&quot;</code></li>
+<li>If the tenant is not found or is disabled/in maintenance, the request is rejected with HTTP 403</li>
+<li>On success, <code>req.tenantId</code> and <code>req.tenantConfig</code> are set on the request object for downstream use</li>
+</ol>
+<h3>URL Routing</h3>
+<p>Each tenant is accessible at its own URL path:</p>
+<pre><code>/t/{slug}/...
+</code></pre>
+<p>Examples:</p>
+<ul>
+<li><code>/t/law/dashboard</code> - Law tenant dashboard</li>
+<li><code>/t/psychology/ai-chat</code> - Psychology tenant AI chat</li>
+<li><code>/t/law/lawyers</code> - Law tenant lawyer directory</li>
+</ul>
+<p>The root path <code>/</code> redirects authenticated users to <code>/t/law/dashboard</code> (default tenant). Unauthenticated users see the public landing page.</p>
+<h3>Client-Side Tenant Header Injection</h3>
+<p>The frontend automatically includes the tenant context on every API request. In <code>client/src/lib/queryClient.ts</code>:</p>
+<ul>
+<li>A global <code>currentTenantSlug</code> variable is set when the tenant app mounts</li>
+<li><code>setCurrentTenant(slug)</code> is called synchronously before any component renders</li>
+<li>All fetch requests via TanStack Query include <code>X-Tenant-ID: {slug}</code> in their headers</li>
+<li>The <code>apiRequest()</code> helper also includes this header for mutations</li>
+</ul>
+<h3>Data Isolation</h3>
+<p>All core database tables include a <code>tenantId</code> column (defaults to <code>&quot;law&quot;</code>). The storage layer (<code>server/storage.ts</code>) filters every query by <code>tenantId</code>:</p>
+<pre><code>AND table.tenantId = :tenantId
+</code></pre>
+<p>The <code>users</code> table is the one exception: it is global (no tenant_id). Users connect to tenants through the <code>userProfiles</code> table, which has a <code>tenantId</code> column.</p>
+<h3>Feature Flags</h3>
+<p>Each tenant has a set of feature flags stored in <code>tenants.config.featureFlags</code> (JSONB):</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Description</th>
+<th>Law Default</th>
+<th>Psychology Default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AI_CHAT_ENABLED</code></td>
+<td>AI assistant feature</td>
+<td>true</td>
+<td>true</td>
+</tr>
+<tr>
+<td><code>APPOINTMENTS_ENABLED</code></td>
+<td>Booking system</td>
+<td>true</td>
+<td>true</td>
+</tr>
+<tr>
+<td><code>DOCUMENT_SYSTEM_ENABLED</code></td>
+<td>Document generation</td>
+<td>true</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>VIDEO_LIBRARY_ENABLED</code></td>
+<td>Educational videos</td>
+<td>true</td>
+<td>true</td>
+</tr>
+<tr>
+<td><code>CRISIS_HANDLING_ENABLED</code></td>
+<td>Crisis support</td>
+<td>false</td>
+<td>true</td>
+</tr>
+<tr>
+<td><code>JOURNALING_ENABLED</code></td>
+<td>Journaling</td>
+<td>false</td>
+<td>true</td>
+</tr>
+</tbody></table>
+<p>Feature flags are enforced at two levels:</p>
+<ol>
+<li><strong>Server-side</strong>: <code>requireFeature(flag)</code> middleware checks <code>req.tenantConfig.featureFlags[flag]</code> and returns HTTP 403 if disabled</li>
+<li><strong>Client-side</strong>: <code>hasFeature(flag)</code> hook controls UI visibility (sidebar items, page access)</li>
+</ol>
+<h3>Tenant Configuration</h3>
+<p>The full <code>TenantConfig</code> interface:</p>
+<pre><code class="language-typescript">interface TenantConfig {
+  featureFlags: TenantFeatureFlags;
+  aiConfig: {
+    mode: &quot;chatgpt&quot; | &quot;rag&quot; | &quot;hybrid&quot;;
+    model: string;
+    maxTokens: number;
+    requireCitations: boolean;
+  };
+  commissionPercentage: number;
+  customSignupFields?: CustomSignupField[];
+  theme?: {
+    primaryColor?: string;
+    accentColor?: string;
+    logo?: string;
+  };
+}
+</code></pre>
+<h3>Tenant Display Configuration</h3>
+<p>The frontend maintains a separate <code>TenantDisplayConfig</code> in <code>client/src/lib/tenant-config.ts</code> that controls UI presentation per tenant:</p>
+<ul>
+<li><strong>Professional labels</strong>: &quot;Lawyer&quot; vs &quot;Therapist&quot;</li>
+<li><strong>Quick actions</strong>: Different dashboard shortcuts per vertical</li>
+<li><strong>AI assistant</strong>: Different welcome messages, placeholders, and suggestions</li>
+<li><strong>Specialties</strong>: Different lists per vertical (e.g., &quot;Family Law&quot; vs &quot;Cognitive Behavioral Therapy&quot;)</li>
+<li><strong>Video categories</strong>: Different category colors and labels</li>
+<li><strong>Taglines and disclaimers</strong>: Contextual messaging per vertical</li>
+</ul>
+<hr>
+<h2>5. Authentication System</h2>
+<p>UniCortex uses a dual authentication system supporting both Replit OIDC and email/password admin login.</p>
+<h3>Replit Auth (OIDC)</h3>
+<p><strong>Files</strong>: <code>server/replit_integrations/auth/replitAuth.ts</code></p>
+<p>The primary authentication method uses OpenID Connect via Replit&#39;s identity provider:</p>
+<ol>
+<li><strong>Login</strong>: <code>GET /api/login</code> initiates the OIDC flow with scopes <code>[&#39;openid&#39;, &#39;email&#39;, &#39;profile&#39;, &#39;offline_access&#39;]</code></li>
+<li><strong>Callback</strong>: <code>GET /api/callback</code> handles the provider response, extracts user claims, and creates a session</li>
+<li><strong>User creation</strong>: On first login, a user record is created/upserted in the <code>users</code> table with ID, email, name, and profile image</li>
+<li><strong>Token refresh</strong>: The middleware automatically refreshes expired OIDC tokens using the refresh token</li>
+</ol>
+<p>OIDC configuration is discovered and cached from <code>process.env.ISSUER_URL</code> with a 1-hour cache. Dynamic strategy registration supports multi-domain deployments.</p>
+<h3>Email/Password Admin Login</h3>
+<p><strong>Files</strong>: <code>server/replit_integrations/auth/routes.ts</code></p>
+<p>A secondary authentication method for hardcoded admin accounts:</p>
+<ol>
+<li><code>POST /api/auth/admin-login</code> accepts <code>{ email, password }</code></li>
+<li>Looks up the user by email in the database</li>
+<li>Verifies the password using bcryptjs</li>
+<li>Validates the user has <code>superadmin</code> or <code>tenant_admin</code> role</li>
+<li>Creates a session via <code>req.session.adminUser</code> containing <code>{ id, email, claims: { sub: id } }</code></li>
+</ol>
+<h3>Session Management</h3>
+<ul>
+<li><strong>Storage</strong>: PostgreSQL via <code>connect-pg-simple</code> (stored in the <code>sessions</code> table)</li>
+<li><strong>TTL</strong>: 7 days (604,800,000 milliseconds)</li>
+<li><strong>Cookie settings</strong>:<ul>
+<li><code>httpOnly: true</code> (XSS protection)</li>
+<li><code>secure: true</code> (HTTPS only)</li>
+<li><code>sameSite: &quot;lax&quot;</code> (CSRF protection)</li>
+<li><code>maxAge: 7 days</code></li>
+</ul>
+</li>
+</ul>
+<h3>Authentication Middleware</h3>
+<p>The <code>isAuthenticated</code> middleware checks both auth methods:</p>
+<ol>
+<li>First checks for <code>req.session.adminUser</code> (admin login)</li>
+<li>Falls back to <code>req.user</code> (OIDC user)</li>
+<li>Validates OIDC token expiration</li>
+<li>Auto-refreshes expired tokens using the refresh token</li>
+<li>Sets <code>req.userId</code> for downstream use</li>
+</ol>
+<h3>Client-Side Auth</h3>
+<p>The <code>use-auth.ts</code> hook:</p>
+<ul>
+<li>Fetches <code>/api/auth/user</code> with <code>credentials: &quot;include&quot;</code> to send session cookies</li>
+<li>5-minute stale time for the query cache</li>
+<li>Provides: <code>user</code>, <code>isLoading</code>, <code>isAdmin</code>, <code>isSuperadmin</code>, <code>isLawyer</code>, <code>hasFeature()</code>, <code>isPendingVerification</code>, <code>isVerifiedProfessional</code>, <code>verificationStatus</code></li>
+<li>Logout redirects to <code>/api/logout</code></li>
+</ul>
+<hr>
+<h2>6. Role-Based Access Control</h2>
+<h3>Role Hierarchy</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Level</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>superadmin</code></td>
+<td>Platform</td>
+<td>Full access to everything including tenant management, audit logs, and user role assignment</td>
+</tr>
+<tr>
+<td><code>tenant_admin</code></td>
+<td>Organization</td>
+<td>Admin features within a tenant: lawyer verification, document management, video management, analytics</td>
+</tr>
+<tr>
+<td><code>professional</code></td>
+<td>Service Provider</td>
+<td>Professional features (appointments, document reviews) plus all client features</td>
+</tr>
+<tr>
+<td><code>client</code></td>
+<td>End User</td>
+<td>Standard features: AI chat, find professionals, book appointments, create documents, watch videos</td>
+</tr>
+</tbody></table>
+<h3>Role Assignment Rules</h3>
+<ol>
+<li><strong>First user</strong>: The first user to register via Replit Auth is automatically assigned the <code>superadmin</code> role</li>
+<li><strong>New users</strong>: All subsequent users default to the <code>client</code> role</li>
+<li><strong>Admin accounts</strong>: Seeded admin accounts have pre-assigned roles (<code>superadmin</code> and <code>tenant_admin</code>)</li>
+<li><strong>Role selection</strong>: After first OIDC signup, users choose between <code>client</code> and <code>professional</code> on the role selection page</li>
+<li><strong>Manual promotion</strong>: Superadmins can change any user&#39;s role via <code>POST /api/admin/users/:id/role</code></li>
+<li><strong>Admin bypass</strong>: Users with <code>superadmin</code> or <code>tenant_admin</code> roles bypass the role selection flow</li>
+</ol>
+<h3>Permissions Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Feature / Action</th>
+<th>Client</th>
+<th>Professional</th>
+<th>Tenant Admin</th>
+<th>Superadmin</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dashboard</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>AI Chat</td>
+<td>Yes</td>
+<td>Yes (if verified)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Find Professionals</td>
+<td>Yes</td>
+<td>Yes (if verified)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Book Appointments</td>
+<td>Yes</td>
+<td>Yes (if verified)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Create Documents</td>
+<td>Yes</td>
+<td>Yes (if verified)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Watch Videos</td>
+<td>Yes</td>
+<td>Yes (if verified)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>View Own Appointments (as professional)</td>
+<td>No</td>
+<td>Yes (if verified)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Review Documents (as professional)</td>
+<td>No</td>
+<td>Yes (if verified)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Admin Panel</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>User Management</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Approve/Reject Lawyers</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Manage Videos</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Tenant Management</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Audit Logs</td>
+<td>No</td>
+<td>No</td>
+<td>Tenant-scoped</td>
+<td>All tenants</td>
+</tr>
+<tr>
+<td>Change User Roles</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<h3>Enforcement</h3>
+<ul>
+<li><strong>Server-side</strong>: <code>requireRole(...roles)</code> middleware on route handlers</li>
+<li><strong>Client-side</strong>: Conditional rendering based on <code>isAdmin</code>, <code>isSuperadmin</code>, <code>isLawyer</code> from <code>use-auth.ts</code></li>
+<li><strong>Route-level</strong>: <code>App.tsx</code> checks roles before rendering pages; unauthorized access shows 404</li>
+</ul>
+<hr>
+<h2>7. Database Schema</h2>
+<h3>Enums</h3>
+<pre><code>user_role:          &#39;client&#39; | &#39;professional&#39; | &#39;tenant_admin&#39; | &#39;superadmin&#39;
+verification_status: &#39;pending&#39; | &#39;verified&#39; | &#39;rejected&#39;
+appointment_status:  &#39;hold&#39; | &#39;confirmed&#39; | &#39;in_progress&#39; | &#39;completed&#39; | &#39;cancelled&#39; | &#39;no_show&#39; | &#39;expired&#39;
+document_status:     &#39;drafting&#39; | &#39;awaiting_payment&#39; | &#39;in_review&#39; | &#39;needs_client_input&#39; | &#39;finalized&#39; | &#39;delivered&#39;
+tenant_status:       &#39;active&#39; | &#39;disabled&#39; | &#39;maintenance&#39;
+</code></pre>
+<h3>Tables</h3>
+<h4>sessions</h4>
+<p>PostgreSQL session store for Express sessions.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sid</td>
+<td>varchar</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>sess</td>
+<td>jsonb</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>expire</td>
+<td>timestamp</td>
+<td>NOT NULL, INDEXED</td>
+</tr>
+</tbody></table>
+<h4>users</h4>
+<p>Global user table (no tenant_id). Shared across all tenants.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>varchar</td>
+<td>PRIMARY KEY, default: <code>gen_random_uuid()</code></td>
+</tr>
+<tr>
+<td>email</td>
+<td>varchar</td>
+<td>UNIQUE</td>
+</tr>
+<tr>
+<td>firstName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>lastName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>profileImageUrl</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>passwordHash</td>
+<td>varchar</td>
+<td>For admin email/password login</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>tenants</h4>
+<p>Tenant definitions with configuration.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>slug</td>
+<td>varchar</td>
+<td>NOT NULL, UNIQUE</td>
+</tr>
+<tr>
+<td>name</td>
+<td>varchar</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>domain</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>status</td>
+<td>tenant_status</td>
+<td>NOT NULL, default: &#39;disabled&#39;</td>
+</tr>
+<tr>
+<td>config</td>
+<td>jsonb</td>
+<td>default: &#39;{}&#39; (TenantConfig)</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>auditLogs</h4>
+<p>Audit trail for privileged actions.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>actorId</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>action</td>
+<td>varchar</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>resource</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>resourceId</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>metadata</td>
+<td>jsonb</td>
+<td></td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>userProfiles</h4>
+<p>User profile data linked to a tenant. This is how users connect to tenants.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>userId</td>
+<td>varchar</td>
+<td>NOT NULL, FK -&gt; users.id</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>role</td>
+<td>user_role</td>
+<td>NOT NULL, default: &#39;client&#39;</td>
+</tr>
+<tr>
+<td>fullName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>dateOfBirth</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>emailAddress</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>address</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>phone</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>country</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>state</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>language</td>
+<td>varchar</td>
+<td>default: &#39;en&#39;</td>
+</tr>
+<tr>
+<td>bio</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>customFields</td>
+<td>jsonb</td>
+<td>Record&lt;string, string&gt;</td>
+</tr>
+<tr>
+<td>onboardingComplete</td>
+<td>boolean</td>
+<td>default: false</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>professionals</h4>
+<p>Professional profiles (lawyers, therapists) with verification data.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>userId</td>
+<td>varchar</td>
+<td>NOT NULL, FK -&gt; users.id</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>specialty</td>
+<td>text</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>secondarySpecialties</td>
+<td>text[]</td>
+<td></td>
+</tr>
+<tr>
+<td>barNumber</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>yearsExperience</td>
+<td>integer</td>
+<td>default: 0</td>
+</tr>
+<tr>
+<td>hourlyRate</td>
+<td>decimal(10,2)</td>
+<td>default: 150.00</td>
+</tr>
+<tr>
+<td>consultationRate</td>
+<td>decimal(10,2)</td>
+<td>default: 75.00</td>
+</tr>
+<tr>
+<td>verificationStatus</td>
+<td>verification_status</td>
+<td>NOT NULL, default: &#39;pending&#39;</td>
+</tr>
+<tr>
+<td>verificationDocs</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>licenseDocUrl</td>
+<td>text</td>
+<td>Object storage path for license document</td>
+</tr>
+<tr>
+<td>govIdDocUrl</td>
+<td>text</td>
+<td>Object storage path for government ID</td>
+</tr>
+<tr>
+<td>jurisdictions</td>
+<td>text[]</td>
+<td></td>
+</tr>
+<tr>
+<td>languages</td>
+<td>text[]</td>
+<td>default: [&#39;English&#39;]</td>
+</tr>
+<tr>
+<td>rating</td>
+<td>decimal(3,2)</td>
+<td>default: 0.00</td>
+</tr>
+<tr>
+<td>totalReviews</td>
+<td>integer</td>
+<td>default: 0</td>
+</tr>
+<tr>
+<td>totalCases</td>
+<td>integer</td>
+<td>default: 0</td>
+</tr>
+<tr>
+<td>availableDays</td>
+<td>text[]</td>
+<td>default: [&#39;Monday&#39;..&#39;Friday&#39;]</td>
+</tr>
+<tr>
+<td>availableTimeStart</td>
+<td>varchar</td>
+<td>default: &#39;09:00&#39;</td>
+</tr>
+<tr>
+<td>availableTimeEnd</td>
+<td>varchar</td>
+<td>default: &#39;17:00&#39;</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>boolean</td>
+<td>default: true</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>appointments</h4>
+<p>Booking records linking clients to professionals.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>clientId</td>
+<td>varchar</td>
+<td>NOT NULL, FK -&gt; users.id</td>
+</tr>
+<tr>
+<td>professionalId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; professionals.id</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>serviceType</td>
+<td>varchar</td>
+<td>NOT NULL, default: &#39;consultation&#39;</td>
+</tr>
+<tr>
+<td>status</td>
+<td>appointment_status</td>
+<td>NOT NULL, default: &#39;hold&#39;</td>
+</tr>
+<tr>
+<td>scheduledDate</td>
+<td>timestamp</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>durationMinutes</td>
+<td>integer</td>
+<td>default: 30</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>amount</td>
+<td>decimal(10,2)</td>
+<td></td>
+</tr>
+<tr>
+<td>lockExpiresAt</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>completedAt</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>cancelledAt</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>reviews</h4>
+<p>Client reviews for professionals after appointments.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>appointmentId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; appointments.id</td>
+</tr>
+<tr>
+<td>clientId</td>
+<td>varchar</td>
+<td>NOT NULL, FK -&gt; users.id</td>
+</tr>
+<tr>
+<td>professionalId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; professionals.id</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>rating</td>
+<td>integer</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>comment</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>documentTypes</h4>
+<p>Template definitions for document generation.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>name</td>
+<td>varchar</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>description</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>category</td>
+<td>varchar</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>price</td>
+<td>decimal(10,2)</td>
+<td>default: 49.99</td>
+</tr>
+<tr>
+<td>intakeFields</td>
+<td>jsonb</td>
+<td>Array&lt;{ name, label, type, required }&gt;</td>
+</tr>
+<tr>
+<td>isActive</td>
+<td>boolean</td>
+<td>default: true</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>documents</h4>
+<p>Generated document instances with review workflow.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>clientId</td>
+<td>varchar</td>
+<td>NOT NULL, FK -&gt; users.id</td>
+</tr>
+<tr>
+<td>documentTypeId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; documentTypes.id</td>
+</tr>
+<tr>
+<td>assignedLawyerId</td>
+<td>integer</td>
+<td>FK -&gt; professionals.id (nullable)</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>status</td>
+<td>document_status</td>
+<td>NOT NULL, default: &#39;drafting&#39;</td>
+</tr>
+<tr>
+<td>intakeAnswers</td>
+<td>jsonb</td>
+<td>Record&lt;string, string&gt;</td>
+</tr>
+<tr>
+<td>currentDraft</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>finalContent</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>reviewNotes</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>amount</td>
+<td>decimal(10,2)</td>
+<td></td>
+</tr>
+<tr>
+<td>paidAt</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>deliveredAt</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>documentVersions</h4>
+<p>Version history for documents.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>documentId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; documents.id</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>versionNumber</td>
+<td>integer</td>
+<td>NOT NULL, default: 1</td>
+</tr>
+<tr>
+<td>content</td>
+<td>text</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>editedBy</td>
+<td>varchar</td>
+<td>FK -&gt; users.id (nullable)</td>
+</tr>
+<tr>
+<td>changeNotes</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>aiConversations</h4>
+<p>AI chat conversation threads.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>userId</td>
+<td>varchar</td>
+<td>NOT NULL, FK -&gt; users.id</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>title</td>
+<td>varchar</td>
+<td>default: &#39;New Conversation&#39;</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>aiMessages</h4>
+<p>Individual messages within AI conversations.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>conversationId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; aiConversations.id (CASCADE DELETE)</td>
+</tr>
+<tr>
+<td>role</td>
+<td>varchar</td>
+<td>NOT NULL (&#39;user&#39; or &#39;assistant&#39;)</td>
+</tr>
+<tr>
+<td>content</td>
+<td>text</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>refusalFlag</td>
+<td>boolean</td>
+<td>default: false</td>
+</tr>
+<tr>
+<td>escalationType</td>
+<td>varchar</td>
+<td>&#39;BOOK_LAWYER&#39;, &#39;DOC_GEN&#39;, or null</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>videos</h4>
+<p>Educational video content.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>title</td>
+<td>varchar</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>description</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>videoUrl</td>
+<td>text</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>thumbnailUrl</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td>category</td>
+<td>varchar</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>duration</td>
+<td>integer</td>
+<td>In seconds</td>
+</tr>
+<tr>
+<td>jurisdiction</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>language</td>
+<td>varchar</td>
+<td>default: &#39;en&#39;</td>
+</tr>
+<tr>
+<td>isPublished</td>
+<td>boolean</td>
+<td>default: true</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>videoProgress</h4>
+<p>User watch progress tracking.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>userId</td>
+<td>varchar</td>
+<td>NOT NULL, FK -&gt; users.id</td>
+</tr>
+<tr>
+<td>videoId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; videos.id</td>
+</tr>
+<tr>
+<td>tenantId</td>
+<td>varchar</td>
+<td>default: &#39;law&#39;</td>
+</tr>
+<tr>
+<td>watchedSeconds</td>
+<td>integer</td>
+<td>default: 0</td>
+</tr>
+<tr>
+<td>completed</td>
+<td>boolean</td>
+<td>default: false</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>timestamp</td>
+<td>default: NOW()</td>
+</tr>
+</tbody></table>
+<h4>conversations</h4>
+<p>Basic conversation table (from Replit chat integration).</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>title</td>
+<td>text</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: CURRENT_TIMESTAMP, NOT NULL</td>
+</tr>
+</tbody></table>
+<h4>messages</h4>
+<p>Messages within basic conversations (from Replit chat integration).</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>serial</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>conversationId</td>
+<td>integer</td>
+<td>NOT NULL, FK -&gt; conversations.id (CASCADE DELETE)</td>
+</tr>
+<tr>
+<td>role</td>
+<td>text</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>content</td>
+<td>text</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>timestamp</td>
+<td>default: CURRENT_TIMESTAMP, NOT NULL</td>
+</tr>
+</tbody></table>
+<h3>Key Relationships</h3>
+<ul>
+<li><code>userProfiles.userId</code> -&gt; <code>users.id</code> (many profiles per user, one per tenant)</li>
+<li><code>professionals.userId</code> -&gt; <code>users.id</code> (one professional record per user per tenant)</li>
+<li><code>appointments</code> links <code>clientId</code> (users) to <code>professionalId</code> (professionals)</li>
+<li><code>reviews</code> links appointments, clients, and professionals</li>
+<li><code>documents</code> links clients to documentTypes and optionally to professionals (assignedLawyerId)</li>
+<li><code>documentVersions</code> tracks document edit history with <code>editedBy</code> -&gt; users</li>
+<li><code>aiMessages</code> cascade-deletes when parent <code>aiConversation</code> is deleted</li>
+</ul>
+<hr>
+<h2>8. API Reference</h2>
+<h3>Authentication Endpoints</h3>
+<h4>POST /api/auth/admin-login</h4>
+<p>Admin email/password authentication.</p>
+<ul>
+<li><strong>Auth</strong>: None (public)</li>
+<li><strong>Body</strong>: <code>{ email: string, password: string }</code></li>
+<li><strong>Response</strong>: <code>{ message: &quot;Login successful&quot;, userId: string }</code></li>
+<li><strong>Errors</strong>: 400 (missing fields), 401 (invalid credentials), 403 (not admin role)</li>
+</ul>
+<h4>GET /api/login</h4>
+<p>Initiates Replit OIDC login flow. Redirects to OIDC provider.</p>
+<h4>GET /api/callback</h4>
+<p>OIDC callback handler. Redirects to <code>/</code> on success or <code>/?auth_error=...</code> on failure.</p>
+<h4>GET /api/logout</h4>
+<p>Destroys session and redirects to <code>/</code> or OIDC logout endpoint.</p>
+<h4>POST /api/auth/select-role</h4>
+<p>First-time user role selection and profile creation.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Body</strong>: <code>{ role: &quot;client&quot;|&quot;professional&quot;, fullName, dateOfBirth, emailAddress, phone, address, customFields? }</code></li>
+<li><strong>Response</strong>: <code>{ message: &quot;Role selected successfully&quot;, role }</code></li>
+<li><strong>Behavior</strong>: Creates userProfile record, sets <code>onboardingComplete=true</code> for clients. Professionals redirected to document upload step.</li>
+</ul>
+<h4>GET /api/auth/user</h4>
+<p>Returns current user data including role, tenant config, and verification status.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Response</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;string&quot;,
+  &quot;email&quot;: &quot;string&quot;,
+  &quot;firstName&quot;: &quot;string&quot;,
+  &quot;lastName&quot;: &quot;string&quot;,
+  &quot;profileImageUrl&quot;: &quot;string&quot;,
+  &quot;role&quot;: &quot;client|professional|tenant_admin|superadmin&quot;,
+  &quot;profileId&quot;: 1,
+  &quot;fullName&quot;: &quot;string&quot;,
+  &quot;dateOfBirth&quot;: &quot;string&quot;,
+  &quot;emailAddress&quot;: &quot;string&quot;,
+  &quot;address&quot;: &quot;string&quot;,
+  &quot;phone&quot;: &quot;string&quot;,
+  &quot;country&quot;: &quot;string&quot;,
+  &quot;state&quot;: &quot;string&quot;,
+  &quot;bio&quot;: &quot;string&quot;,
+  &quot;customFields&quot;: {},
+  &quot;onboardingComplete&quot;: true,
+  &quot;tenantId&quot;: &quot;law&quot;,
+  &quot;tenantConfig&quot;: { ... },
+  &quot;verificationStatus&quot;: &quot;pending|verified|rejected&quot;
+}
+</code></pre>
+<h4>PATCH /api/auth/profile-picture</h4>
+<p>Update user&#39;s profile picture URL.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Body</strong>: <code>{ profileImageUrl: &quot;/objects/...&quot; }</code></li>
+<li><strong>Response</strong>: <code>{ message: &quot;Profile picture updated&quot;, profileImageUrl }</code></li>
+</ul>
+<h4>DELETE /api/auth/delete-account</h4>
+<p>Delete the current user&#39;s account and all associated data.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Response</strong>: <code>{ message: &quot;Account deleted successfully&quot; }</code></li>
+<li><strong>Restrictions</strong>: Admins cannot self-delete</li>
+<li><strong>Cleanup</strong>: Nullifies document assignments and version edit references, deletes sessions, profiles, professional records, then user row</li>
+</ul>
+<hr>
+<h3>Tenant Endpoints</h3>
+<h4>GET /api/tenant</h4>
+<p>Returns current tenant info and config.</p>
+<ul>
+<li><strong>Auth</strong>: None</li>
+<li><strong>Response</strong>: <code>{ slug, name, status, config }</code></li>
+</ul>
+<hr>
+<h3>Professional Endpoints</h3>
+<h4>GET /api/lawyers</h4>
+<p>Browse verified professionals.</p>
+<ul>
+<li><strong>Auth</strong>: None</li>
+<li><strong>Feature Flag</strong>: <code>APPOINTMENTS_ENABLED</code></li>
+<li><strong>Response</strong>: Array of professional objects (sensitive doc URLs stripped)</li>
+<li><strong>Filter</strong>: Only returns <code>verificationStatus = &quot;verified&quot;</code> and <code>isActive = true</code></li>
+</ul>
+<h4>GET /api/lawyers/:id</h4>
+<p>Get a single professional&#39;s profile.</p>
+<ul>
+<li><strong>Auth</strong>: None</li>
+<li><strong>Response</strong>: Professional object (sensitive doc URLs stripped)</li>
+</ul>
+<h4>POST /api/register/lawyer</h4>
+<p>Submit professional registration with verification documents.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Body</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;specialty&quot;: &quot;string (required)&quot;,
+  &quot;secondarySpecialties&quot;: [&quot;string&quot;],
+  &quot;barNumber&quot;: &quot;string (required)&quot;,
+  &quot;yearsExperience&quot;: 0,
+  &quot;bio&quot;: &quot;string&quot;,
+  &quot;jurisdictions&quot;: [&quot;string&quot;],
+  &quot;languages&quot;: [&quot;string&quot;],
+  &quot;licenseDocUrl&quot;: &quot;/objects/... (required)&quot;,
+  &quot;govIdDocUrl&quot;: &quot;/objects/... (required)&quot;
+}
+</code></pre>
+<ul>
+<li><strong>Behavior</strong>: Creates professional record with <code>verificationStatus: &quot;pending&quot;</code>, <code>isActive: false</code>. Updates user role to <code>professional</code>. Sets <code>onboardingComplete: true</code>.</li>
+</ul>
+<h4>GET /api/admin/lawyers</h4>
+<p>List all professionals (all statuses).</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin or superadmin</li>
+</ul>
+<h4>GET /api/admin/lawyers/pending</h4>
+<p>List professionals awaiting verification.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+</ul>
+<h4>POST /api/admin/lawyers/:id/approve</h4>
+<p>Approve a professional&#39;s verification.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+<li><strong>Behavior</strong>: Sets <code>verificationStatus: &quot;verified&quot;</code>. Creates audit log.</li>
+</ul>
+<h4>POST /api/admin/lawyers/:id/reject</h4>
+<p>Reject a professional&#39;s verification.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+<li><strong>Behavior</strong>: Sets <code>verificationStatus: &quot;rejected&quot;</code>. Creates audit log.</li>
+</ul>
+<h4>DELETE /api/admin/lawyers/:id</h4>
+<p>Delete a professional profile and demote user to client.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+<li><strong>Behavior</strong>: Deletes professional record, updates user role to &quot;client&quot;. Creates audit log.</li>
+</ul>
+<hr>
+<h3>Appointment Endpoints</h3>
+<h4>GET /api/appointments</h4>
+<p>Get the current client&#39;s appointments.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Feature Flag</strong>: <code>APPOINTMENTS_ENABLED</code></li>
+</ul>
+<h4>POST /api/appointments</h4>
+<p>Create a new appointment.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Feature Flag</strong>: <code>APPOINTMENTS_ENABLED</code></li>
+<li><strong>Body</strong>: <code>{ professionalId, serviceType?, scheduledDate, durationMinutes?, notes? }</code></li>
+<li><strong>Pricing</strong>: 60-min = hourlyRate, 30-min = consultationRate</li>
+<li><strong>Initial Status</strong>: <code>&quot;confirmed&quot;</code></li>
+</ul>
+<h4>POST /api/appointments/:id/cancel</h4>
+<p>Cancel an appointment.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+</ul>
+<h4>GET /api/lawyer/appointments</h4>
+<p>Get the current professional&#39;s appointments.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: professional</li>
+</ul>
+<h4>POST /api/lawyer/appointments/:id/status</h4>
+<p>Update an appointment&#39;s status (professional-side).</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: professional</li>
+<li><strong>Body</strong>: <code>{ status: &quot;confirmed&quot;|&quot;completed&quot;|&quot;cancelled&quot;|&quot;no_show&quot; }</code></li>
+<li><strong>Ownership</strong>: Professional must own the appointment</li>
+</ul>
+<hr>
+<h3>Document Endpoints</h3>
+<h4>GET /api/document-types</h4>
+<p>List available document templates.</p>
+<ul>
+<li><strong>Auth</strong>: None</li>
+<li><strong>Feature Flag</strong>: <code>DOCUMENT_SYSTEM_ENABLED</code></li>
+</ul>
+<h4>GET /api/documents</h4>
+<p>Get the current client&#39;s documents.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Feature Flag</strong>: <code>DOCUMENT_SYSTEM_ENABLED</code></li>
+</ul>
+<h4>POST /api/documents</h4>
+<p>Create a new document with AI-generated draft.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Feature Flag</strong>: <code>DOCUMENT_SYSTEM_ENABLED</code></li>
+<li><strong>Body</strong>: <code>{ documentTypeId, intakeAnswers? }</code></li>
+<li><strong>Behavior</strong>: Creates document record, then asynchronously generates AI draft</li>
+</ul>
+<h4>GET /api/admin/documents</h4>
+<p>List all documents in the tenant.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+</ul>
+<h4>POST /api/admin/documents/:id/assign</h4>
+<p>Assign a lawyer to review a document.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+<li><strong>Body</strong>: <code>{ lawyerId: number }</code></li>
+<li><strong>Audit</strong>: Creates &quot;document.assign_lawyer&quot; log entry</li>
+</ul>
+<h4>GET /api/lawyer/documents</h4>
+<p>Get documents assigned to the current lawyer.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: professional</li>
+</ul>
+<h4>POST /api/lawyer/documents/:id/approve</h4>
+<p>Approve and finalize a document.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: professional</li>
+<li><strong>Behavior</strong>: Sets status to &quot;finalized&quot;, copies currentDraft to finalContent</li>
+<li><strong>Ownership</strong>: Lawyer must be assigned to the document</li>
+</ul>
+<h4>POST /api/lawyer/documents/:id/request-changes</h4>
+<p>Request changes from the client.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: professional</li>
+<li><strong>Body</strong>: <code>{ notes: &quot;string&quot; }</code></li>
+<li><strong>Behavior</strong>: Sets status to &quot;needs_client_input&quot;, stores reviewNotes</li>
+</ul>
+<h4>POST /api/documents/:id/resubmit</h4>
+<p>Client resubmits an edited document.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Body</strong>: <code>{ updatedDraft: &quot;string&quot; }</code></li>
+<li><strong>Behavior</strong>: Sets status to &quot;in_review&quot;, updates currentDraft</li>
+<li><strong>Guard</strong>: Only if current status is &quot;needs_client_input&quot; and user owns the document</li>
+</ul>
+<hr>
+<h3>AI Chat Endpoints</h3>
+<h4>GET /api/ai/conversations</h4>
+<p>List the current user&#39;s conversations.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Feature Flag</strong>: <code>AI_CHAT_ENABLED</code></li>
+</ul>
+<h4>POST /api/ai/conversations</h4>
+<p>Create a new conversation.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Feature Flag</strong>: <code>AI_CHAT_ENABLED</code></li>
+<li><strong>Body</strong>: <code>{ title? }</code></li>
+</ul>
+<h4>DELETE /api/ai/conversations/:id</h4>
+<p>Delete a conversation and all its messages.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Response</strong>: 204 No Content</li>
+</ul>
+<h4>GET /api/ai/conversations/:id/messages</h4>
+<p>Get all messages in a conversation.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+</ul>
+<h4>POST /api/ai/conversations/:id/messages</h4>
+<p>Send a message and stream AI response.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Body</strong>: <code>{ content: &quot;string&quot; }</code></li>
+<li><strong>Response</strong>: Server-Sent Events stream</li>
+</ul>
+<pre><code>data: {&quot;content&quot;:&quot;streaming text&quot;}
+data: {&quot;content&quot;:&quot;more text&quot;}
+data: {&quot;done&quot;:true,&quot;escalation&quot;:&quot;BOOK_LAWYER&quot;}
+</code></pre>
+<hr>
+<h3>Video Endpoints</h3>
+<h4>GET /api/videos</h4>
+<p>List published videos for the current tenant.</p>
+<ul>
+<li><strong>Auth</strong>: None</li>
+<li><strong>Feature Flag</strong>: <code>VIDEO_LIBRARY_ENABLED</code></li>
+</ul>
+<h4>GET /api/admin/videos</h4>
+<p>List all videos (including unpublished).</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+</ul>
+<h4>POST /api/admin/videos</h4>
+<p>Create a new video entry.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+<li><strong>Body</strong>: <code>{ title, description?, videoUrl, thumbnailUrl?, category, duration?, jurisdiction?, language? }</code></li>
+</ul>
+<h4>DELETE /api/admin/videos/:id</h4>
+<p>Delete a video.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+</ul>
+<hr>
+<h3>Object Storage Endpoints</h3>
+<h4>POST /api/uploads/request-url</h4>
+<p>Request a presigned upload URL.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Body</strong>: <code>{ name: &quot;string&quot;, size?: number, contentType?: &quot;string&quot; }</code></li>
+<li><strong>Allowed types</strong>: image/jpeg, image/png, image/gif, image/webp, application/pdf</li>
+<li><strong>Max size</strong>: 10MB</li>
+<li><strong>Response</strong>: <code>{ uploadURL, objectPath, metadata }</code></li>
+</ul>
+<h4>GET /objects/:objectPath</h4>
+<p>Serve an uploaded file.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Response</strong>: File binary data</li>
+</ul>
+<hr>
+<h3>User Management Endpoints</h3>
+<h4>GET /api/user/profile</h4>
+<p>Get current user&#39;s profile and professional data.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Response</strong>: <code>{ profile: UserProfile, professional: Professional|null }</code></li>
+</ul>
+<h4>GET /api/admin/users</h4>
+<p>List all users. Superadmins see all tenants; tenant_admins see only their tenant.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin or superadmin</li>
+</ul>
+<h4>POST /api/admin/users/:id/role</h4>
+<p>Change a user&#39;s role.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: superadmin only</li>
+<li><strong>Body</strong>: <code>{ role: &quot;client&quot;|&quot;professional&quot;|&quot;tenant_admin&quot;|&quot;superadmin&quot; }</code></li>
+<li><strong>Audit</strong>: Creates &quot;user.role_change&quot; log entry</li>
+</ul>
+<h4>DELETE /api/admin/users/:id</h4>
+<p>Delete a user account (admin action).</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+<li><strong>Restrictions</strong>: Cannot delete self, cannot delete superadmin (unless you are superadmin)</li>
+<li><strong>Audit</strong>: Creates &quot;user.admin_delete&quot; log entry</li>
+</ul>
+<hr>
+<h3>Superadmin Tenant Management Endpoints</h3>
+<h4>GET /api/superadmin/tenants</h4>
+<p>List all tenants.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: superadmin</li>
+</ul>
+<h4>GET /api/superadmin/tenants/:id</h4>
+<p>Get a single tenant&#39;s details.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: superadmin</li>
+</ul>
+<h4>POST /api/superadmin/tenants</h4>
+<p>Create a new tenant.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: superadmin</li>
+<li><strong>Body</strong>: <code>{ slug, name, domain?, status?, config? }</code></li>
+<li><strong>Audit</strong>: Creates &quot;tenant.create&quot; log entry</li>
+</ul>
+<h4>PATCH /api/superadmin/tenants/:id</h4>
+<p>Update a tenant. Config is merged with existing values (preserves fields not included in the update).</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: superadmin</li>
+<li><strong>Body</strong>: Partial tenant fields</li>
+<li><strong>Audit</strong>: Creates &quot;tenant.update&quot; log entry</li>
+</ul>
+<hr>
+<h3>Audit Log Endpoints</h3>
+<h4>GET /api/superadmin/audit-logs</h4>
+<p>List audit log entries.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: superadmin</li>
+<li><strong>Query params</strong>: <code>tenant</code> (filter by tenant slug), <code>limit</code> (default: 100)</li>
+</ul>
+<hr>
+<h3>Admin Analytics Endpoints</h3>
+<h4>GET /api/admin/analytics</h4>
+<p>Tenant analytics data.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+</ul>
+<h4>GET /api/admin/stats</h4>
+<p>Admin statistics summary.</p>
+<ul>
+<li><strong>Auth</strong>: Required</li>
+<li><strong>Role</strong>: tenant_admin</li>
+</ul>
+<hr>
+<h2>9. Frontend Pages &amp; Routing</h2>
+<h3>Root-Level Routes (not tenant-scoped)</h3>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Page</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/</code></td>
+<td>RootRedirect / Landing</td>
+<td>Authenticated users redirect to <code>/t/law/dashboard</code>; unauthenticated users see the landing page</td>
+</tr>
+<tr>
+<td><code>/admin-login</code></td>
+<td>AdminLoginPage</td>
+<td>Email/password login for admin accounts</td>
+</tr>
+</tbody></table>
+<h3>Tenant-Scoped Routes (<code>/t/{slug}/...</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Page</th>
+<th>Feature Gate</th>
+<th>Role Gate</th>
+<th>Verification Lock</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/dashboard</code></td>
+<td>Dashboard</td>
+<td>None</td>
+<td>None</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/role-selection</code></td>
+<td>RoleSelection</td>
+<td>None</td>
+<td>None</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/profile</code></td>
+<td>EditProfile</td>
+<td>None</td>
+<td>None</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/ai-chat</code></td>
+<td>AiChat</td>
+<td>AI_CHAT_ENABLED</td>
+<td>None</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/lawyers</code></td>
+<td>Lawyers</td>
+<td>APPOINTMENTS_ENABLED</td>
+<td>None</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/lawyers/:id</code></td>
+<td>LawyerProfile</td>
+<td>None</td>
+<td>None</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/bookings</code></td>
+<td>Bookings</td>
+<td>APPOINTMENTS_ENABLED</td>
+<td>None</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/documents</code></td>
+<td>Documents</td>
+<td>DOCUMENT_SYSTEM_ENABLED</td>
+<td>None</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/videos</code></td>
+<td>Videos</td>
+<td>VIDEO_LIBRARY_ENABLED</td>
+<td>None</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/register/lawyer</code></td>
+<td>RegisterLawyer</td>
+<td>None</td>
+<td>None</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/lawyer/appointments</code></td>
+<td>LawyerAppointments</td>
+<td>None</td>
+<td>professional, tenant_admin</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/lawyer/reviews</code></td>
+<td>LawyerReview</td>
+<td>None</td>
+<td>professional, tenant_admin</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/admin</code></td>
+<td>Admin</td>
+<td>None</td>
+<td>tenant_admin, superadmin</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/admin/users</code></td>
+<td>AdminUsers</td>
+<td>None</td>
+<td>tenant_admin, superadmin</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/admin/analytics</code></td>
+<td>Analytics</td>
+<td>None</td>
+<td>tenant_admin, superadmin</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/admin/audit-logs</code></td>
+<td>AuditLogs</td>
+<td>None</td>
+<td>tenant_admin, superadmin</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/superadmin/tenants</code></td>
+<td>TenantManagement</td>
+<td>None</td>
+<td>superadmin</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/superadmin/audit-logs</code></td>
+<td>AuditLogs</td>
+<td>None</td>
+<td>superadmin</td>
+<td>No</td>
+</tr>
+</tbody></table>
+<h3>Routing Implementation</h3>
+<p>The frontend uses Wouter with nested routers:</p>
+<ol>
+<li><code>App.tsx</code> defines root-level routes</li>
+<li>The <code>TenantApp</code> component extracts the tenant slug from the URL path using regex <code>/^\/t\/([^/]+)/</code></li>
+<li>A nested <code>&lt;Router base={basePath}&gt;</code> is used so inner routes are relative (e.g., <code>/dashboard</code> instead of <code>/t/law/dashboard</code>)</li>
+<li><code>setCurrentTenant(slug)</code> is called synchronously before rendering to ensure API requests include the correct tenant header</li>
+</ol>
+<h3>Onboarding Redirects</h3>
+<ul>
+<li>If <code>!user.onboardingComplete</code> and user is not admin: redirect to <code>/t/{slug}/role-selection</code></li>
+<li>If user role is <code>professional</code> and has no professional record: redirect to <code>/t/{slug}/register/lawyer</code></li>
+<li>If verification is pending/rejected and user navigates to a locked route: show <code>VerificationLock</code> component</li>
+</ul>
+<hr>
+<h2>10. Sidebar &amp; Navigation</h2>
+<h3>Sidebar Structure</h3>
+<p>The sidebar (<code>client/src/components/app-sidebar.tsx</code>) has four dynamic sections:</p>
+<h4>Section 1: Main (visible to all authenticated users)</h4>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Icon</th>
+<th>Feature Flag</th>
+<th>Lock when pending</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dashboard</td>
+<td>Home</td>
+<td>Always shown</td>
+<td>No</td>
+</tr>
+<tr>
+<td>AI Assistant</td>
+<td>MessageSquare</td>
+<td>AI_CHAT_ENABLED</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Find Lawyers/Therapists</td>
+<td>Users</td>
+<td>APPOINTMENTS_ENABLED</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>My Bookings</td>
+<td>Calendar</td>
+<td>APPOINTMENTS_ENABLED</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Documents</td>
+<td>FileText</td>
+<td>DOCUMENT_SYSTEM_ENABLED</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Legal/Wellness Videos</td>
+<td>Video</td>
+<td>VIDEO_LIBRARY_ENABLED</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<h4>Section 2: Professional (visible if user role is <code>professional</code>)</h4>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Icon</th>
+<th>Feature Flag</th>
+<th>Lock when pending</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>My Appointments</td>
+<td>Calendar</td>
+<td>APPOINTMENTS_ENABLED</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Document Reviews</td>
+<td>FileCheck</td>
+<td>DOCUMENT_SYSTEM_ENABLED</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<p>Shows &quot;Pending&quot; badge next to section header if professional is not yet verified.</p>
+<h4>Section 3: Administration (visible if user role is <code>tenant_admin</code> or <code>superadmin</code>)</h4>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Icon</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Admin Panel</td>
+<td>Shield</td>
+</tr>
+<tr>
+<td>User Management</td>
+<td>UserCog</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>BarChart3</td>
+</tr>
+</tbody></table>
+<h4>Section 4: Super Admin (visible if user role is <code>superadmin</code>)</h4>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Icon</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tenant Management</td>
+<td>Building2</td>
+</tr>
+<tr>
+<td>Audit Logs</td>
+<td>FileSearch</td>
+</tr>
+</tbody></table>
+<h3>Sidebar Footer</h3>
+<ul>
+<li>User avatar with initials fallback</li>
+<li>User&#39;s first and last name</li>
+<li>Role badge (colored by role: gold for superadmin, blue for tenant_admin, emerald for professional; hidden for clients)</li>
+<li>User email</li>
+<li>Edit Profile link</li>
+<li>Logout link</li>
+</ul>
+<h3>Dynamic Behavior</h3>
+<ul>
+<li>Items are filtered by feature flags: <code>hasFeature(flag)</code> from the <code>useAuth</code> hook</li>
+<li>Items are locked (disabled + lock icon) when <code>isPendingVerification</code> is true for professionals</li>
+<li>Labels adapt per tenant: &quot;Find Lawyers&quot; vs &quot;Find Therapists&quot;, &quot;Legal Videos&quot; vs &quot;Wellness Videos&quot;</li>
+<li>Sidebar icon changes per tenant: Scale (law) vs Brain (psychology)</li>
+</ul>
+<hr>
+<h2>11. Professional Verification Flow</h2>
+<h3>Overview</h3>
+<p>Professionals must complete a multi-step onboarding process and upload verification documents before accessing any platform features.</p>
+<h3>Step-by-Step Flow</h3>
+<h4>Step 1: Role Selection (<code>role-selection.tsx</code>)</h4>
+<ul>
+<li>After first OIDC login, users land on the role selection page</li>
+<li>Two options: &quot;I Need Legal Help&quot; (client) or &quot;I&#39;m a Lawyer&quot; (professional)</li>
+<li>Admin users (superadmin, tenant_admin) bypass this step entirely</li>
+</ul>
+<h4>Step 2: Personal Information (<code>role-selection.tsx</code>)</h4>
+<ul>
+<li>All users fill in: full name, date of birth, email address, phone number, address</li>
+<li>Phone number is required and validated server-side</li>
+<li>Custom signup fields (if configured per tenant) are shown here</li>
+<li>Clients complete onboarding at this step and are redirected to the dashboard</li>
+</ul>
+<h4>Step 3: Professional Verification (<code>register-lawyer.tsx</code>)</h4>
+<ul>
+<li>Professionals continue to this step for document upload</li>
+<li>Required fields:<ul>
+<li><strong>Specialty</strong> (dropdown from tenant config specialties list)</li>
+<li><strong>Bar Number</strong> (text input)</li>
+<li><strong>Professional License</strong> (file upload: PDF, JPG, PNG, WebP; max 10MB)</li>
+<li><strong>Government-Issued Photo ID</strong> (file upload: same constraints)</li>
+</ul>
+</li>
+<li>Optional fields: years of experience, bio, jurisdictions, languages, secondary specialties</li>
+<li>Files are uploaded to object storage via presigned URLs using the <code>useUpload</code> hook</li>
+<li>On submission, a <code>professionals</code> record is created with <code>verificationStatus: &quot;pending&quot;</code> and <code>isActive: false</code></li>
+<li>User role is updated to <code>professional</code> and <code>onboardingComplete</code> is set to <code>true</code></li>
+</ul>
+<h3>Verification States</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Dashboard Access</th>
+<th>Feature Access</th>
+<th>Sidebar Display</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pending</code></td>
+<td>Yes</td>
+<td>Locked (VerificationLock)</td>
+<td>Lock icons + &quot;Pending&quot; badge</td>
+</tr>
+<tr>
+<td><code>verified</code></td>
+<td>Yes</td>
+<td>Full access</td>
+<td>Normal</td>
+</tr>
+<tr>
+<td><code>rejected</code></td>
+<td>Yes</td>
+<td>Locked (VerificationLock)</td>
+<td>Lock icons</td>
+</tr>
+</tbody></table>
+<h3>VerificationLock Component (<code>verification-lock.tsx</code>)</h3>
+<p>Shown on all feature pages when a professional has pending or rejected verification:</p>
+<ul>
+<li><strong>Pending</strong>: Clock icon, &quot;Your professional account is under review&quot;, &quot;Typically takes 1-2 business days&quot;</li>
+<li><strong>Rejected</strong>: Shield icon, &quot;Your verification was not approved&quot;, suggests contacting admin</li>
+</ul>
+<h3>Admin Verification Workflow</h3>
+<ol>
+<li>Tenant admin navigates to Admin Panel</li>
+<li>Views &quot;Pending Lawyers&quot; tab showing professionals awaiting review</li>
+<li>Can view uploaded license and government ID documents</li>
+<li>Approves or rejects each professional</li>
+<li>Approval sets <code>verificationStatus: &quot;verified&quot;</code> and unlocks all features</li>
+<li>Rejection sets <code>verificationStatus: &quot;rejected&quot;</code> and keeps features locked</li>
+<li>All approval/rejection actions create audit log entries</li>
+</ol>
+<h3>Security</h3>
+<ul>
+<li>Verification document URLs (<code>licenseDocUrl</code>, <code>govIdDocUrl</code>) are stripped from public API responses</li>
+<li>The <code>/objects/:path</code> endpoint requires authentication to serve files</li>
+<li>Only admins can see verification documents through the admin panel</li>
+</ul>
+<hr>
+<h2>12. AI Chat Service</h2>
+<h3>Architecture</h3>
+<p>The AI service (<code>server/ai-service.ts</code>) integrates with OpenAI via Replit AI Integrations using the <code>gpt-4o-mini</code> model.</p>
+<h3>Configuration</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Model</td>
+<td>gpt-4o-mini</td>
+</tr>
+<tr>
+<td>Max Tokens (chat)</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>Max Tokens (document generation)</td>
+<td>2048</td>
+</tr>
+<tr>
+<td>Temperature (chat)</td>
+<td>0.7</td>
+</tr>
+<tr>
+<td>Temperature (document generation)</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>Streaming</td>
+<td>Enabled for chat</td>
+</tr>
+</tbody></table>
+<h3>System Prompt &amp; Safety Rules</h3>
+<p>The AI assistant operates under 10 strict safety rules:</p>
+<ol>
+<li>Provides GENERAL legal/wellness education ONLY. It is NOT a lawyer/therapist.</li>
+<li>Always includes a disclaimer about educational-only nature</li>
+<li>Can explain legal/wellness concepts, processes, rights, and procedures</li>
+<li>Can help users understand what type of professional they need</li>
+<li><strong>Must REFUSE to</strong>:<ul>
+<li>Draft or review specific legal documents</li>
+<li>Provide case-specific legal advice</li>
+<li>Recommend specific legal strategies</li>
+<li>Interpret specific contracts or agreements</li>
+</ul>
+</li>
+<li><strong>Escalates</strong> when users need specific help:<ul>
+<li>Suggests &quot;Book a Lawyer&quot; -&gt; <code>BOOK_LAWYER</code> escalation</li>
+<li>Suggests &quot;Generate Document&quot; -&gt; <code>DOC_GEN</code> escalation</li>
+</ul>
+</li>
+<li>Maintains warm, professional, empathetic tone</li>
+<li>Covers topics: employment, family, immigration, business, contracts, real estate, criminal defense, estate planning, IP, tax law</li>
+<li>Uses simple language, avoids jargon</li>
+<li>Keeps responses focused and practical with actionable next steps</li>
+</ol>
+<h3>Streaming Implementation</h3>
+<p><strong>Server-side</strong> (<code>server/routes.ts</code>):</p>
+<ol>
+<li>Sets SSE headers: <code>Content-Type: text/event-stream</code>, <code>Cache-Control: no-cache</code>, <code>Connection: keep-alive</code></li>
+<li>Loads conversation history from database</li>
+<li>Sends messages to OpenAI with streaming enabled</li>
+<li>Streams chunks as <code>data: {&quot;content&quot;:&quot;...&quot;}\n\n</code></li>
+<li>After stream completes, checks response for escalation keywords</li>
+<li>Sends final event: <code>data: {&quot;done&quot;:true,&quot;escalation&quot;:&quot;BOOK_LAWYER&quot;}\n\n</code></li>
+<li>Saves both user message and assistant response to database</li>
+</ol>
+<p><strong>Client-side</strong> (<code>client/src/pages/ai-chat.tsx</code>):</p>
+<ol>
+<li>Uses <code>fetch()</code> with response body reader</li>
+<li>Decodes streaming chunks with <code>TextDecoder</code></li>
+<li>Parses JSON messages prefixed with <code>data: </code></li>
+<li>Updates UI in real-time with <code>setStreamingMessage()</code></li>
+<li>On <code>done</code> flag, finalizes the message and refreshes the query cache</li>
+</ol>
+<h3>Escalation Detection</h3>
+<p>After the full response is generated, the system scans for escalation keywords:</p>
+<table>
+<thead>
+<tr>
+<th>Keywords Found</th>
+<th>Escalation Type</th>
+<th>UI Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&quot;book a lawyer&quot;, &quot;consult with a lawyer&quot;, &quot;speak with an attorney&quot;, &quot;hire an attorney&quot;, &quot;retain a lawyer&quot;</td>
+<td><code>BOOK_LAWYER</code></td>
+<td>Shows &quot;Book a Lawyer&quot; action button</td>
+</tr>
+<tr>
+<td>&quot;generate a document&quot;, &quot;document generation&quot;, &quot;create a contract&quot;, &quot;draft a&quot;</td>
+<td><code>DOC_GEN</code></td>
+<td>Shows &quot;Generate Document&quot; action button</td>
+</tr>
+</tbody></table>
+<h3>Document Draft Generation</h3>
+<p>The <code>generateDocumentDraft()</code> function uses a separate system prompt for document generation:</p>
+<ul>
+<li>Generates professional legal document drafts</li>
+<li>Includes standard legal language and proper formatting</li>
+<li>Adds &quot;DRAFT - FOR REVIEW ONLY&quot; header</li>
+<li>Adds &quot;AI-generated, must be reviewed by a qualified attorney&quot; footer</li>
+<li>Uses temperature 0.3 for more deterministic output</li>
+</ul>
+<hr>
+<h2>13. Document Management System</h2>
+<h3>Document Types</h3>
+<p>Document types are templates with dynamic intake fields. Each type has:</p>
+<ul>
+<li>Name and description</li>
+<li>Category (Business, Dispute, Real Estate, Employment, Personal)</li>
+<li>Price</li>
+<li>Dynamic intake fields with type validation (text, textarea, date, email, tel, select)</li>
+</ul>
+<h3>Document Lifecycle</h3>
+<pre><code>Client creates document  -&gt;  AI generates draft  -&gt;  Admin assigns lawyer
+       |                          |                        |
+   [drafting]               [drafting]               [in_review]
+                                                          |
+                              Lawyer reviews -------------|
+                              /                           \
+                   [needs_client_input]              [finalized]
+                        |                                 |
+                  Client edits                      [delivered]
+                        |
+                   [in_review] (resubmitted)
+</code></pre>
+<h3>Status Transitions</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Description</th>
+<th>Next States</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>drafting</code></td>
+<td>Initial state, AI generating draft</td>
+<td><code>in_review</code> (when admin assigns lawyer)</td>
+</tr>
+<tr>
+<td><code>awaiting_payment</code></td>
+<td>Payment required (future use)</td>
+<td><code>in_review</code></td>
+</tr>
+<tr>
+<td><code>in_review</code></td>
+<td>Assigned lawyer is reviewing</td>
+<td><code>finalized</code>, <code>needs_client_input</code></td>
+</tr>
+<tr>
+<td><code>needs_client_input</code></td>
+<td>Lawyer requested changes</td>
+<td><code>in_review</code> (client resubmits)</td>
+</tr>
+<tr>
+<td><code>finalized</code></td>
+<td>Lawyer approved, document complete</td>
+<td><code>delivered</code></td>
+</tr>
+<tr>
+<td><code>delivered</code></td>
+<td>Document delivered to client</td>
+<td>Terminal state</td>
+</tr>
+</tbody></table>
+<h3>Version Tracking</h3>
+<p>Each document edit creates a <code>documentVersions</code> record with:</p>
+<ul>
+<li>Version number</li>
+<li>Full content snapshot</li>
+<li>Editor ID</li>
+<li>Change notes</li>
+<li>Timestamp</li>
+</ul>
+<hr>
+<h2>14. Appointment &amp; Booking System</h2>
+<h3>Booking Flow</h3>
+<ol>
+<li>Client browses the professional directory (filtered by specialty, search, rating)</li>
+<li>Client views a professional&#39;s profile with availability info</li>
+<li>Client selects a date, time, and service type</li>
+<li>Client submits the booking request</li>
+</ol>
+<h3>Pricing</h3>
+<table>
+<thead>
+<tr>
+<th>Duration</th>
+<th>Rate Field</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>30 minutes</td>
+<td>consultationRate</td>
+<td>$75.00</td>
+</tr>
+<tr>
+<td>60 minutes</td>
+<td>hourlyRate</td>
+<td>$150.00</td>
+</tr>
+</tbody></table>
+<h3>Appointment Status Lifecycle</h3>
+<pre><code>Client books  -&gt;  [hold]  -&gt;  [confirmed]  -&gt;  [in_progress]  -&gt;  [completed]
+                                    |                                    
+                              [cancelled]                             
+                              [no_show]                               
+                              [expired]                               
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>hold</code></td>
+<td>Initial booking, awaiting confirmation</td>
+</tr>
+<tr>
+<td><code>confirmed</code></td>
+<td>Appointment confirmed (default on creation)</td>
+</tr>
+<tr>
+<td><code>in_progress</code></td>
+<td>Appointment is currently happening</td>
+</tr>
+<tr>
+<td><code>completed</code></td>
+<td>Appointment finished successfully</td>
+</tr>
+<tr>
+<td><code>cancelled</code></td>
+<td>Appointment cancelled by either party</td>
+</tr>
+<tr>
+<td><code>no_show</code></td>
+<td>Client did not attend</td>
+</tr>
+<tr>
+<td><code>expired</code></td>
+<td>Lock time expired without confirmation</td>
+</tr>
+</tbody></table>
+<h3>Professional-Side Management</h3>
+<p>Professionals can:</p>
+<ul>
+<li>View their appointments via <code>GET /api/lawyer/appointments</code></li>
+<li>Update appointment status (confirm, complete, cancel, mark no-show)</li>
+<li>Ownership is verified: a professional can only manage their own appointments</li>
+</ul>
+<hr>
+<h2>15. Video Library</h2>
+<h3>Structure</h3>
+<p>Videos are categorized by topic and scoped to tenants. Each video has:</p>
+<ul>
+<li>Title and description</li>
+<li>Video URL (external hosting)</li>
+<li>Optional thumbnail URL</li>
+<li>Category (matches tenant-specific categories)</li>
+<li>Duration (in seconds)</li>
+<li>Jurisdiction and language</li>
+<li>Published flag (admin controls visibility)</li>
+</ul>
+<h3>Categories by Tenant</h3>
+<p><strong>Law tenant</strong>: Employment, Family Law, Immigration, Business, Contracts, Real Estate, Criminal</p>
+<p><strong>Psychology tenant</strong>: Stress Management, Anxiety, Depression, Relationships, Self-Care, Mindfulness, Sleep</p>
+<h3>Progress Tracking</h3>
+<p>The <code>videoProgress</code> table tracks:</p>
+<ul>
+<li>How many seconds a user has watched</li>
+<li>Whether the video is marked as completed</li>
+<li>Last update timestamp</li>
+</ul>
+<h3>Admin Management</h3>
+<p>Tenant admins can:</p>
+<ul>
+<li>View all videos (including unpublished)</li>
+<li>Create new video entries</li>
+<li>Delete videos</li>
+</ul>
+<hr>
+<h2>16. Object Storage</h2>
+<h3>Overview</h3>
+<p>File uploads use Google Cloud Storage via the Replit object storage integration. Files are stored in a default bucket with public and private directories.</p>
+<h3>Upload Flow</h3>
+<ol>
+<li>Client requests a presigned upload URL: <code>POST /api/uploads/request-url</code></li>
+<li>Server validates file type and size, generates presigned URL</li>
+<li>Client uploads directly to the presigned URL</li>
+<li>The returned <code>objectPath</code> (e.g., <code>/objects/private/abc123.pdf</code>) is stored in the database</li>
+</ol>
+<h3>Constraints</h3>
+<table>
+<thead>
+<tr>
+<th>Constraint</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Max file size</td>
+<td>10MB</td>
+</tr>
+<tr>
+<td>Allowed image types</td>
+<td>image/jpeg, image/png, image/gif, image/webp</td>
+</tr>
+<tr>
+<td>Allowed document types</td>
+<td>application/pdf</td>
+</tr>
+</tbody></table>
+<h3>Serving Files</h3>
+<p><code>GET /objects/:objectPath</code> serves uploaded files. This endpoint requires authentication to prevent unauthorized access to private documents (verification docs, etc.).</p>
+<h3>Directory Structure</h3>
+<table>
+<thead>
+<tr>
+<th>Directory</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>public</code></td>
+<td>Public assets (profile pictures, thumbnails)</td>
+</tr>
+<tr>
+<td><code>.private</code></td>
+<td>Private objects (verification documents, uploaded files)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>17. Audit Logging</h2>
+<h3>Tracked Actions</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Trigger</th>
+<th>Resource</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tenant.create</code></td>
+<td>Superadmin creates a new tenant</td>
+<td>tenant</td>
+</tr>
+<tr>
+<td><code>tenant.update</code></td>
+<td>Superadmin updates tenant config/status</td>
+<td>tenant</td>
+</tr>
+<tr>
+<td><code>lawyer.approve</code></td>
+<td>Admin approves a professional</td>
+<td>professional</td>
+</tr>
+<tr>
+<td><code>lawyer.reject</code></td>
+<td>Admin rejects a professional</td>
+<td>professional</td>
+</tr>
+<tr>
+<td><code>lawyer.delete</code></td>
+<td>Admin deletes a professional profile</td>
+<td>professional</td>
+</tr>
+<tr>
+<td><code>user.role_change</code></td>
+<td>Superadmin changes a user&#39;s role</td>
+<td>user</td>
+</tr>
+<tr>
+<td><code>user.admin_delete</code></td>
+<td>Admin deletes a user account</td>
+<td>user</td>
+</tr>
+<tr>
+<td><code>document.assign_lawyer</code></td>
+<td>Admin assigns a lawyer to review a document</td>
+<td>document</td>
+</tr>
+<tr>
+<td><code>document.approve</code></td>
+<td>Lawyer approves/finalizes a document</td>
+<td>document</td>
+</tr>
+</tbody></table>
+<h3>Log Entry Structure</h3>
+<p>Each audit log entry contains:</p>
+<ul>
+<li><strong>tenantId</strong>: Which tenant the action occurred in</li>
+<li><strong>actorId</strong>: The user who performed the action</li>
+<li><strong>action</strong>: The action identifier (e.g., <code>&quot;lawyer.approve&quot;</code>)</li>
+<li><strong>resource</strong>: The resource type affected</li>
+<li><strong>resourceId</strong>: The specific resource ID</li>
+<li><strong>metadata</strong>: Additional context (JSON object with varying fields)</li>
+<li><strong>createdAt</strong>: Timestamp</li>
+</ul>
+<h3>Access Control</h3>
+<ul>
+<li><strong>Superadmins</strong>: Can view all audit logs across all tenants, with optional tenant filter</li>
+<li><strong>Tenant admins</strong>: Can view audit logs for their own tenant only</li>
+<li><strong>Other roles</strong>: No access to audit logs</li>
+</ul>
+<hr>
+<h2>18. User Flows</h2>
+<h3>Flow 1: New User Registration (Client)</h3>
+<ol>
+<li>User clicks &quot;Sign Up&quot; on landing page</li>
+<li>Redirected to Replit OIDC login</li>
+<li>After successful auth, redirected to <code>/t/law/role-selection</code></li>
+<li><strong>Step 1</strong>: Selects &quot;I Need Legal Help&quot; (client role)</li>
+<li><strong>Step 2</strong>: Fills in personal info (name, DOB, email, phone, address)</li>
+<li>Submits -&gt; <code>POST /api/auth/select-role</code> with <code>role: &quot;client&quot;</code></li>
+<li><code>userProfile</code> created with <code>onboardingComplete: true</code></li>
+<li>Redirected to <code>/t/law/dashboard</code></li>
+<li>Full access to all client features</li>
+</ol>
+<h3>Flow 2: New User Registration (Professional)</h3>
+<ol>
+<li>User clicks &quot;Sign Up&quot; on landing page</li>
+<li>Redirected to Replit OIDC login</li>
+<li>After successful auth, redirected to <code>/t/law/role-selection</code></li>
+<li><strong>Step 1</strong>: Selects &quot;I&#39;m a Lawyer&quot; (professional role)</li>
+<li><strong>Step 2</strong>: Fills in personal info (name, DOB, email, phone, address)</li>
+<li>Submits -&gt; <code>POST /api/auth/select-role</code> with <code>role: &quot;professional&quot;</code></li>
+<li><code>userProfile</code> created with <code>onboardingComplete: false</code>, role set to <code>professional</code></li>
+<li>Redirected to <code>/t/law/register/lawyer</code></li>
+<li><strong>Step 3</strong>: Fills in professional details + uploads license and government ID</li>
+<li>Submits -&gt; <code>POST /api/register/lawyer</code></li>
+<li><code>professionals</code> record created with <code>verificationStatus: &quot;pending&quot;</code>, <code>isActive: false</code></li>
+<li><code>onboardingComplete</code> set to <code>true</code></li>
+<li>Redirected to <code>/t/law/dashboard</code></li>
+<li>All features locked until admin approval (VerificationLock shown)</li>
+</ol>
+<h3>Flow 3: Admin Login</h3>
+<ol>
+<li>Navigate to <code>/admin-login</code></li>
+<li>Enter email and password for a seeded admin account</li>
+<li><code>POST /api/auth/admin-login</code> validates credentials</li>
+<li>Session created, redirected to <code>/t/law/dashboard</code></li>
+<li>Full admin access based on role (superadmin or tenant_admin)</li>
+</ol>
+<h3>Flow 4: Professional Verification (Admin Side)</h3>
+<ol>
+<li>Tenant admin navigates to Admin Panel (<code>/t/law/admin</code>)</li>
+<li>Views &quot;Pending Lawyers&quot; tab</li>
+<li>Reviews each professional&#39;s submitted documents (license + ID)</li>
+<li>Clicks &quot;Approve&quot; or &quot;Reject&quot;</li>
+<li>Approval: <code>verificationStatus</code> -&gt; &quot;verified&quot;, features unlocked for the professional</li>
+<li>Rejection: <code>verificationStatus</code> -&gt; &quot;rejected&quot;, features remain locked</li>
+<li>Audit log entry created</li>
+</ol>
+<h3>Flow 5: AI Chat Conversation</h3>
+<ol>
+<li>User navigates to AI Chat (<code>/t/law/ai-chat</code>)</li>
+<li>Creates a new conversation or selects an existing one</li>
+<li>Types a message and sends it</li>
+<li>Message is saved to database, sent to OpenAI with conversation history</li>
+<li>Response streams back via SSE, displayed in real-time</li>
+<li>If AI mentions booking a lawyer or generating a document, escalation buttons appear</li>
+<li>User can continue the conversation with full context preserved</li>
+</ol>
+<h3>Flow 6: Document Generation and Review</h3>
+<ol>
+<li>Client navigates to Documents (<code>/t/law/documents</code>)</li>
+<li>Clicks &quot;Create Document&quot;</li>
+<li>Selects a document type (e.g., &quot;Non-Disclosure Agreement&quot;)</li>
+<li>Fills in the intake form with dynamic fields</li>
+<li>Submits -&gt; <code>POST /api/documents</code></li>
+<li>AI generates draft asynchronously using intake answers</li>
+<li>Document appears in client&#39;s document list with status &quot;drafting&quot;</li>
+<li>Admin assigns a lawyer for review -&gt; status changes to &quot;in_review&quot;</li>
+<li>Lawyer reviews the document:<ul>
+<li><strong>Approves</strong>: Status -&gt; &quot;finalized&quot;, <code>finalContent</code> = <code>currentDraft</code></li>
+<li><strong>Requests changes</strong>: Status -&gt; &quot;needs_client_input&quot;, review notes provided</li>
+</ul>
+</li>
+<li>If changes requested, client edits and resubmits -&gt; status back to &quot;in_review&quot;</li>
+<li>Cycle continues until lawyer approves</li>
+<li>Finalized document available for download</li>
+</ol>
+<h3>Flow 7: Booking a Consultation</h3>
+<ol>
+<li>Client navigates to Find Lawyers (<code>/t/law/lawyers</code>)</li>
+<li>Searches/filters by specialty, name, or rating</li>
+<li>Clicks on a lawyer&#39;s card to view their profile</li>
+<li>On the profile page, selects date, time, and consultation type (30-min or 60-min)</li>
+<li>Adds optional notes</li>
+<li>Submits -&gt; <code>POST /api/appointments</code></li>
+<li>Appointment created with status &quot;confirmed&quot;</li>
+<li>Appointment appears in client&#39;s bookings (<code>/t/law/bookings</code>)</li>
+<li>Professional sees the appointment in their view (<code>/t/law/lawyer/appointments</code>)</li>
+<li>Professional can update status: complete, cancel, or mark no-show</li>
+</ol>
+<h3>Flow 8: Tenant Management (Superadmin)</h3>
+<ol>
+<li>Superadmin navigates to Tenant Management (<code>/t/law/superadmin/tenants</code>)</li>
+<li>Views all tenants with their status, feature flags, and configuration</li>
+<li>Can create a new tenant with slug, name, and initial config</li>
+<li>Can edit existing tenant: toggle feature flags, change commission rate, add custom signup fields, change status</li>
+<li>Can enable/disable tenants (disabled tenants reject all requests with 403)</li>
+<li>All changes create audit log entries</li>
+</ol>
+<h3>Flow 9: Account Deletion and Re-Registration</h3>
+<ol>
+<li>User navigates to Edit Profile (<code>/t/law/profile</code>)</li>
+<li>Clicks &quot;Delete Account&quot;</li>
+<li><code>DELETE /api/auth/delete-account</code> is called</li>
+<li>Server cleans up all references:<ul>
+<li>Nullifies <code>documents.assignedLawyerId</code> where user was assigned</li>
+<li>Nullifies <code>documentVersions.editedBy</code> where user edited</li>
+<li>Deletes all active sessions</li>
+<li>Deletes professional record (if any)</li>
+<li>Deletes user profile</li>
+<li>Deletes user record</li>
+</ul>
+</li>
+<li>User is logged out</li>
+<li>The same email can now be used for a completely fresh registration</li>
+</ol>
+<hr>
+<h2>19. Environment Variables &amp; Secrets</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Source</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>DATABASE_URL</code></td>
+<td>Replit PostgreSQL</td>
+<td>Database connection string</td>
+</tr>
+<tr>
+<td><code>SESSION_SECRET</code></td>
+<td>Secret</td>
+<td>Express session encryption key</td>
+</tr>
+<tr>
+<td><code>ISSUER_URL</code></td>
+<td>Replit Auth</td>
+<td>OIDC provider discovery URL</td>
+</tr>
+<tr>
+<td><code>AI_INTEGRATIONS_OPENAI_API_KEY</code></td>
+<td>Replit AI Integration</td>
+<td>OpenAI API key</td>
+</tr>
+<tr>
+<td><code>AI_INTEGRATIONS_OPENAI_BASE_URL</code></td>
+<td>Replit AI Integration</td>
+<td>OpenAI API base URL</td>
+</tr>
+<tr>
+<td><code>DEFAULT_OBJECT_STORAGE_BUCKET_ID</code></td>
+<td>Replit Object Storage</td>
+<td>GCS bucket identifier</td>
+</tr>
+<tr>
+<td><code>PUBLIC_OBJECT_SEARCH_PATHS</code></td>
+<td>Replit Object Storage</td>
+<td>Public asset paths</td>
+</tr>
+<tr>
+<td><code>PRIVATE_OBJECT_DIR</code></td>
+<td>Replit Object Storage</td>
+<td>Private object directory</td>
+</tr>
+<tr>
+<td><code>GITHUB_TOKEN</code></td>
+<td>Secret</td>
+<td>GitHub integration token</td>
+</tr>
+<tr>
+<td><code>REPL_ID</code></td>
+<td>Replit Environment</td>
+<td>Repl identifier (auto-set)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>20. Seeded Data</h2>
+<p>The database is seeded on application startup (<code>server/seed.ts</code>). Seeding uses <code>onConflictDoNothing</code> to avoid duplicates on restart.</p>
+<h3>Seeded Tenants</h3>
+<table>
+<thead>
+<tr>
+<th>Slug</th>
+<th>Name</th>
+<th>Status</th>
+<th>Commission</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>law</code></td>
+<td>UniCortex Law</td>
+<td>active</td>
+<td>15%</td>
+</tr>
+<tr>
+<td><code>psychology</code></td>
+<td>UniCortex Psychology</td>
+<td>disabled</td>
+<td>20%</td>
+</tr>
+</tbody></table>
+<h3>Seeded Admin Accounts</h3>
+<table>
+<thead>
+<tr>
+<th>Email</th>
+<th>Role</th>
+<th>Tenant</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>admin@simplisolve.us</code></td>
+<td>superadmin</td>
+<td>law</td>
+</tr>
+<tr>
+<td><code>arafat@simplisolve.us</code></td>
+<td>tenant_admin</td>
+<td>law</td>
+</tr>
+</tbody></table>
+<p>Both accounts use the same password hash (bcrypt with 12 rounds).</p>
+<h3>Seeded Lawyers (8 professionals)</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Specialty</th>
+<th>Bar Number</th>
+<th>State</th>
+<th>Status</th>
+<th>Rating</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sarah Chen</td>
+<td>Family Law</td>
+<td>CA-123456</td>
+<td>CA</td>
+<td>verified</td>
+<td>4.90</td>
+</tr>
+<tr>
+<td>Marcus Johnson</td>
+<td>Criminal Defense</td>
+<td>NY-789012</td>
+<td>NY</td>
+<td>verified</td>
+<td>4.85</td>
+</tr>
+<tr>
+<td>Elena Rodriguez</td>
+<td>Immigration</td>
+<td>TX-345678</td>
+<td>TX</td>
+<td>verified</td>
+<td>4.95</td>
+</tr>
+<tr>
+<td>David Kim</td>
+<td>Corporate Law</td>
+<td>CA-901234</td>
+<td>CA</td>
+<td>verified</td>
+<td>4.80</td>
+</tr>
+<tr>
+<td>Jessica Williams</td>
+<td>Employment Law</td>
+<td>IL-567890</td>
+<td>IL</td>
+<td>verified</td>
+<td>4.75</td>
+</tr>
+<tr>
+<td>Robert Taylor</td>
+<td>Real Estate</td>
+<td>FL-234567</td>
+<td>FL</td>
+<td>verified</td>
+<td>4.70</td>
+</tr>
+<tr>
+<td>Aisha Patel</td>
+<td>Intellectual Property</td>
+<td>WA-678901</td>
+<td>WA</td>
+<td>verified</td>
+<td>4.88</td>
+</tr>
+<tr>
+<td>Michael Brown</td>
+<td>Estate Planning</td>
+<td>MA-012345</td>
+<td>MA</td>
+<td>pending</td>
+<td>4.65</td>
+</tr>
+</tbody></table>
+<p>All seeded lawyers belong to the &quot;law&quot; tenant. 7 are verified, 1 is pending (Michael Brown).</p>
+<h3>Seeded Document Types (6 templates)</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Category</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Non-Disclosure Agreement (NDA)</td>
+<td>Business</td>
+<td>$49.99</td>
+</tr>
+<tr>
+<td>Demand Letter</td>
+<td>Dispute</td>
+<td>$39.99</td>
+</tr>
+<tr>
+<td>Freelance Service Agreement</td>
+<td>Business</td>
+<td>$59.99</td>
+</tr>
+<tr>
+<td>Lease Agreement</td>
+<td>Real Estate</td>
+<td>$69.99</td>
+</tr>
+<tr>
+<td>Power of Attorney</td>
+<td>Personal</td>
+<td>$54.99</td>
+</tr>
+<tr>
+<td>Employment Offer Letter</td>
+<td>Employment</td>
+<td>$44.99</td>
+</tr>
+</tbody></table>
+<p>Each document type has 5-6 dynamic intake fields with labels, types, and required flags.</p>
+<h3>Seeded Videos (9 educational videos)</h3>
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Category</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Understanding Your Tenant Rights</td>
+<td>Real Estate</td>
+<td>12 min</td>
+</tr>
+<tr>
+<td>How to Form an LLC</td>
+<td>Business</td>
+<td>9 min</td>
+</tr>
+<tr>
+<td>Employment Discrimination: Know Your Rights</td>
+<td>Employment</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>Family Law Basics: Divorce Process</td>
+<td>Family Law</td>
+<td>14 min</td>
+</tr>
+<tr>
+<td>Immigration: Visa Categories Explained</td>
+<td>Immigration</td>
+<td>11 min</td>
+</tr>
+<tr>
+<td>Small Claims Court: A Complete Guide</td>
+<td>Contracts</td>
+<td>13 min</td>
+</tr>
+<tr>
+<td>Protecting Your Intellectual Property</td>
+<td>Business</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>Estate Planning Fundamentals</td>
+<td>Real Estate</td>
+<td>13.5 min</td>
+</tr>
+<tr>
+<td>Criminal Defense: Your Rights During Arrest</td>
+<td>Criminal</td>
+<td>8 min</td>
+</tr>
+</tbody></table>
+<p>All seeded videos belong to the &quot;law&quot; tenant and are published.</p>
+<hr>
+<h2>Appendix: NPM Scripts</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dev</code></td>
+<td><code>tsx server/index.ts</code></td>
+<td>Start development server (Express + Vite)</td>
+</tr>
+<tr>
+<td><code>build</code></td>
+<td><code>vite build &amp;&amp; tsx script/build.ts</code></td>
+<td>Build frontend + backend for production</td>
+</tr>
+<tr>
+<td><code>start</code></td>
+<td><code>NODE_ENV=production node dist/index.js</code></td>
+<td>Start production server</td>
+</tr>
+<tr>
+<td><code>check</code></td>
+<td><code>tsc</code></td>
+<td>TypeScript type checking</td>
+</tr>
+<tr>
+<td><code>db:push</code></td>
+<td><code>drizzle-kit push</code></td>
+<td>Push schema changes to database</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>This documentation reflects the current state of the UniCortex platform as of February 2026.</em></p>
+
+  <hr>
+  <p style="text-align: center; color: #9ca3af; font-size: 12px; margin-top: 40px;">
+    UniCortex Platform Documentation &mdash; Generated February 2026
+  </p>
+</body>
+</html>

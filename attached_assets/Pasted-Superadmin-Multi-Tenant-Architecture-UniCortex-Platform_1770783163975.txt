@@ -1,0 +1,268 @@
+Superadmin & Multi-Tenant Architecture (UniCortex Platform Core)
+1) What “Multi-Tenant” Means in UniCortex
+
+UniCortex is built as one platform that can power multiple separate apps (tenants) from the same backend.
+
+One backend
+
+One database schema
+
+Multiple tenants
+
+law (ACTIVE at launch)
+
+psychology (DISABLED at launch, enabled later)
+
+A tenant is a complete “world” inside the platform:
+
+its own users
+
+its own professionals
+
+its own content (videos, knowledge base)
+
+its own pricing/commission rules
+
+its own workflows and features
+
+Even though the same backend runs everything, tenants cannot see each other’s data.
+
+2) How Tenant Isolation Works (Critical Requirement)
+
+Every record and every request is scoped by tenant_id.
+
+2.1 Database Rule
+
+All core tables include:
+
+tenant_id
+
+timestamps
+
+soft deletes
+
+Examples:
+
+users.tenant_id
+
+appointments.tenant_id
+
+documents.tenant_id
+
+knowledge_chunks.tenant_id
+
+2.2 API Rule
+
+Every request must resolve a tenant context using one of:
+
+domain mapping (e.g., law.unicortex.com)
+
+app configuration (mobile build)
+
+request header: X-Tenant-ID: law
+
+Then every query is filtered by tenant_id.
+If tenant can’t be resolved → request is rejected.
+
+2.3 Hard Rule
+
+No cross-tenant reads or writes are allowed under any circumstance.
+
+This is enforced by:
+
+backend middleware guards
+
+RBAC checks (role + tenant + ownership)
+
+audit logs on privileged actions
+
+automated tests verifying isolation
+
+3) What the Superadmin Is
+
+The Superadmin is the platform-level control center that manages the entire UniCortex ecosystem.
+
+It is not a “Law admin.”
+It is a platform operator console.
+
+Superadmin exists even if only one tenant is live, because it is what makes UniCortex a platform rather than a single app.
+
+4) What Superadmin Controls (Capabilities)
+4.1 Tenant Lifecycle Management
+
+Create new tenants (future: psychology, finance, medical, etc.)
+
+Enable/disable tenants
+
+Maintain tenant configs and boundaries
+
+Example at launch
+
+law: enabled
+
+psychology: exists but disabled
+
+4.2 Feature Flags Per Tenant
+
+Superadmin can toggle features per tenant without code changes.
+
+Examples:
+
+AI_CHAT_ENABLED
+
+APPOINTMENTS_ENABLED
+
+DOCUMENT_SYSTEM_ENABLED (Law)
+
+CRISIS_HANDLING_ENABLED (Psychology, later)
+
+JOURNALING_ENABLED (Psychology, later)
+
+VIDEO_LIBRARY_ENABLED
+
+This is how you launch Law-only while keeping Psychology “ready.”
+
+4.3 Admin & Role Assignment
+
+Assign tenant admins
+
+Set permissions
+
+Lock down access (RBAC enforcement)
+
+4.4 Payment & Monetization Configuration
+
+Per tenant configuration:
+
+payment gateways
+
+commission percentages
+
+payout schedules
+
+service pricing configuration templates
+
+4.5 AI Provider Configuration (Swappable AI Layer)
+
+Superadmin configures which AI mode a tenant uses:
+
+CHATGPT
+
+RAG
+
+HYBRID
+
+Superadmin also controls:
+
+cost/usage limits per tenant
+
+logging and monitoring
+
+whether citations are required
+
+4.6 Global Observability & Audit Logs
+
+platform-wide audit logs
+
+abuse monitoring
+
+AI safety event logs
+
+operational health (job queue, ingestion status)
+
+5) Why You Want This Architecture (Your Real Reasons)
+Reason 1 — You’re Launching Law Now, But You Don’t Want a Rebuild Later
+
+You’re intentionally building the backend as a platform spine, so later you can launch Psychology by:
+
+enabling the psychology tenant
+
+turning on psychology features via flags
+
+deploying a psychology frontend pointing to the same APIs
+
+Without multi-tenant + superadmin, Psychology later becomes a second separate product with:
+
+duplicated code
+
+duplicated infrastructure
+
+messy data and compliance risks
+
+Reason 2 — Stronger Data Safety & Trust (Especially For High-Trust Services)
+
+Law and Psychology are both sensitive domains.
+
+Tenant isolation ensures:
+
+no accidental mixing of legal and therapy content
+
+no cross-access of client records
+
+clean separation for compliance and safety
+
+This is crucial for credibility with users and professionals.
+
+Reason 3 — You Want the Power to Control Rollouts Without Deploying Code
+
+Feature flags + tenant configs mean:
+
+you can launch features gradually
+
+disable risky modules instantly
+
+run pilots in one region/tenant
+
+avoid app-store redeploys for small changes
+
+That’s how serious SaaS products operate.
+
+Reason 4 — AI Flexibility (ChatGPT Now, RAG Later)
+
+Today you want speed: ChatGPT API.
+Tomorrow you may want:
+
+lower cost
+
+better source control
+
+citations
+
+compliance-friendly, curated knowledge
+
+If AI is modular and controlled via Superadmin:
+
+you can switch a tenant from ChatGPT → RAG with minimal disruption
+
+even run hybrid mode (RAG retrieval + ChatGPT response)
+
+Reason 5 — Long-Term: UniCortex Becomes a “Vertical Launcher”
+
+This architecture means UniCortex can later add new tenants like:
+
+finance
+
+medical
+
+education
+
+immigration
+
+compliance consulting
+
+Each as a “separate app” with shared infrastructure.
+That’s how you scale into a real multi-vertical SaaS.
+
+6) The One-Liner Summary (Developer + Investor Friendly)
+
+UniCortex is built as a multi-tenant platform with a Superadmin control layer so you can:
+
+launch Law first
+
+keep Psychology ready
+
+maintain strict data isolation
+
+control features and AI providers per tenant
+
+expand into new verticals without rebuilding the backend
