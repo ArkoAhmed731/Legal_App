@@ -52,14 +52,14 @@ export default function VerificationLock({ verificationStatus }: VerificationLoc
           <p className="text-sm text-muted-foreground leading-relaxed" data-testid="text-lock-description">
             {isRejected
               ? "Your verification documents were not approved. Please contact an administrator for more information or to resubmit your documents."
-              : "Your professional credentials are currently being reviewed by an administrator. All features will be unlocked once your documents have been verified."
+              : "Your professional credentials are currently being reviewed by an administrator. Approval is typically processed within 24 hours. All features will be unlocked once verified."
             }
           </p>
 
           <div className="pt-2 border-t">
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
-              <span>Typically takes 1-2 business days</span>
+              <span>Approval processed within 24 hours</span>
             </div>
           </div>
         </CardContent>

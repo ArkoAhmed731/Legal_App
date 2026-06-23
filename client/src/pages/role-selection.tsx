@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Scale, Users, Briefcase, ArrowRight, ArrowLeft, MessageSquare, FileText, Calendar, ClipboardCheck, Shield, Loader2, Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { Scale, Users, Briefcase, ArrowRight, ArrowLeft, MessageSquare, FileText, Calendar, ClipboardCheck, Shield, Loader2, Upload, CheckCircle, AlertCircle, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -20,7 +20,7 @@ interface RoleSelectionProps {
 
 export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: RoleSelectionProps) {
   const { toast } = useToast();
-  const [step, setStep] = useState<1 | 2 | 3>(initialStep || 1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(initialStep || 1);
   const [selectedRole, setSelectedRole] = useState<"client" | "professional" | null>(
     initialStep === 3 ? "professional" : null
   );
@@ -105,7 +105,7 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      window.location.href = `${basePath}/dashboard`;
+      setStep(4);
     },
     onError: (err: Error) => {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -446,6 +446,61 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
             </>
           )}
 
+          {step === 4 && (
+            <div className="flex flex-col items-center text-center space-y-6 py-8">
+              <div className="h-20 w-20 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <Clock className="h-10 w-10 text-amber-500" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="font-serif text-2xl sm:text-3xl font-bold" data-testid="text-approval-title">
+                  Application Submitted!
+                </h1>
+                <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
+                  Your lawyer account is now under review. Admin approval will be processed{" "}
+                  <span className="font-semibold text-foreground">within 24 hours</span>.
+                </p>
+              </div>
+              <Card className="w-full max-w-md text-left">
+                <CardContent className="p-5 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Shield className="h-3.5 w-3.5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Document review in progress</p>
+                      <p className="text-xs text-muted-foreground">An administrator will verify your license and government ID.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Clock className="h-3.5 w-3.5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Expected approval time</p>
+                      <p className="text-xs text-muted-foreground">Within 24 hours of submission.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle className="h-3.5 w-3.5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">After approval</p>
+                      <p className="text-xs text-muted-foreground">You'll have full access to appointments, document reviews, and your profile.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Button
+                className="w-full max-w-md"
+                onClick={() => { window.location.href = "/dashboard"; }}
+                data-testid="button-go-to-dashboard"
+              >
+                Go to Dashboard
+              </Button>
+            </div>
+          )}
+
           {step === 3 && selectedRole === "professional" && (
             <>
               <div className="space-y-3">
@@ -620,7 +675,7 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
                       <div className="flex gap-2">
                         <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                         <p className="text-xs text-amber-600">
-                          Your account will be set to pending status after submission. An administrator will review your documents and verify your credentials. All features will be locked until verification is complete.
+                          Your account will be set to pending after submission. An administrator will review your documents and credentials. Approval is typically processed within 24 hours. All features will be unlocked once verified.
                         </p>
                       </div>
                     </div>
