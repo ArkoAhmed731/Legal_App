@@ -54,7 +54,7 @@ export default function LoginPage() {
               data-testid="link-home"
             >
               <Scale className="h-6 w-6 text-accent" />
-              <span className="font-serif text-xl font-bold">UniCortex</span>
+              <span className="font-serif text-xl font-bold">Bichar Bebostha</span>
             </a>
             <ThemeToggle />
           </div>

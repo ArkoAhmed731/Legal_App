@@ -84,21 +84,21 @@ const testimonials = [
     name: "Jennifer M.",
     role: "Small Business Owner",
     image: "/images/testimonial-1.png",
-    quote: "UniCortex helped me generate an NDA and connect with a corporate lawyer in under an hour. The AI assistant explained everything in plain English before I even booked a consultation.",
+    quote: "Bichar Bebostha helped me generate an NDA and connect with a corporate lawyer in under an hour. The AI assistant explained everything in plain English before I even booked a consultation.",
     rating: 5,
   },
   {
     name: "Raj P.",
     role: "Software Engineer",
     image: "/images/testimonial-2.png",
-    quote: "I was overwhelmed with immigration paperwork. The AI assistant broke down every step, and the immigration lawyer I found through UniCortex guided me through the entire H-1B process.",
+    quote: "I was overwhelmed with immigration paperwork. The AI assistant broke down every step, and the immigration lawyer I found through Bichar Bebostha guided me through the entire H-1B process.",
     rating: 5,
   },
   {
     name: "Angela T.",
     role: "HR Director",
     image: "/images/testimonial-3.png",
-    quote: "We use UniCortex for all our employment law questions and document needs. The quality of lawyers on the platform is exceptional, and the document generation saves us hours every week.",
+    quote: "We use Bichar Bebostha for all our employment law questions and document needs. The quality of lawyers on the platform is exceptional, and the document generation saves us hours every week.",
     rating: 5,
   },
 ];
@@ -109,11 +109,11 @@ const faqs = [
     a: "No. Our AI assistant provides general legal education and information to help you understand legal concepts, processes, and your rights. It is not a substitute for professional legal advice. For specific legal matters, we recommend consulting with one of our verified lawyers.",
   },
   {
-    q: "How are lawyers verified on UniCortex?",
+    q: "How are lawyers verified on Bichar Bebostha?",
     a: "Every lawyer on our platform undergoes a thorough verification process. We verify their bar number, confirm their active license status, check their disciplinary record, and review their professional credentials before they can be listed.",
   },
   {
-    q: "How much does it cost to use UniCortex?",
+    q: "How much does it cost to use Bichar Bebostha?",
     a: "Creating an account and using the AI assistant is completely free. Lawyer consultations are priced transparently by each attorney, typically ranging from $75 to $175 for an initial consultation. Document generation fees vary by document type.",
   },
   {
@@ -125,8 +125,8 @@ const faqs = [
     a: "You can generate NDAs, demand letters, freelance service agreements, lease agreements, powers of attorney, employment offer letters, and more. Each document is AI-drafted and can be reviewed by a qualified lawyer before finalization.",
   },
   {
-    q: "Can I use UniCortex from any location?",
-    a: "Yes. UniCortex is accessible from anywhere with an internet connection. Our lawyers are licensed in various U.S. jurisdictions, and you can filter by jurisdiction to find attorneys licensed in your state.",
+    q: "Can I use Bichar Bebostha from any location?",
+    a: "Yes. Bichar Bebostha is accessible from anywhere with an internet connection. Our lawyers are licensed in various U.S. jurisdictions, and you can filter by jurisdiction to find attorneys licensed in your state.",
   },
 ];
 
@@ -163,7 +163,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-2">
               <Scale className="h-6 w-6 text-accent" />
               <span className="font-serif text-xl font-bold" data-testid="text-logo">
-                UniCortex
+                Bichar Bebostha
               </span>
             </div>
             <div className="hidden md:flex items-center gap-6">
@@ -291,7 +291,7 @@ export default function LandingPage() {
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg">
               From instant AI-powered guidance to verified lawyer consultations and AI-drafted documents, 
-              UniCortex provides comprehensive legal support at every step.
+              Bichar Bebostha provides comprehensive legal support at every step.
             </p>
           </div>
 
@@ -385,7 +385,7 @@ export default function LandingPage() {
               What Our Clients Say
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Thousands of individuals and businesses trust UniCortex for accessible, reliable legal support.
+              Thousands of individuals and businesses trust Bichar Bebostha for accessible, reliable legal support.
             </p>
           </div>
 
@@ -424,13 +424,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-6">
-              <Badge variant="outline" className="text-xs">Why UniCortex</Badge>
+              <Badge variant="outline" className="text-xs">Why Bichar Bebostha</Badge>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold">
                 Built for People Who Deserve Better Legal Access
               </h2>
               <p className="text-muted-foreground leading-relaxed">
                 Legal services have traditionally been expensive, confusing, and inaccessible. 
-                UniCortex changes that by combining AI technology with verified human expertise 
+                Bichar Bebostha changes that by combining AI technology with verified human expertise 
                 to make legal guidance available to everyone.
               </p>
               <div className="space-y-4">
@@ -497,7 +497,7 @@ export default function LandingPage() {
               Ready to Get Legal Clarity?
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Join thousands of individuals and businesses who trust UniCortex 
+              Join thousands of individuals and businesses who trust Bichar Bebostha 
               for accessible, reliable, and affordable legal guidance.
             </p>
           </div>
@@ -526,7 +526,7 @@ export default function LandingPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Scale className="h-5 w-5 text-accent" />
-                <span className="font-serif text-lg font-bold">UniCortex</span>
+                <span className="font-serif text-lg font-bold">Bichar Bebostha</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Making legal guidance accessible, affordable, and understandable for everyone through AI and verified professionals.
@@ -574,7 +574,7 @@ export default function LandingPage() {
 
           <div className="border-t pt-6 flex flex-wrap items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
-              2026 UniCortex. All rights reserved. UniCortex provides educational legal information only. 
+              2026 Bichar Bebostha. All rights reserved. Bichar Bebostha provides educational legal information only. 
               This is not legal advice. Always consult a qualified attorney for legal matters.
             </p>
             <a

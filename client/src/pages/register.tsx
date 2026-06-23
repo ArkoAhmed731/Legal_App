@@ -68,7 +68,7 @@ export default function RegisterPage() {
               data-testid="link-home"
             >
               <Scale className="h-6 w-6 text-accent" />
-              <span className="font-serif text-xl font-bold">UniCortex</span>
+              <span className="font-serif text-xl font-bold">Bichar Bebostha</span>
             </a>
             <ThemeToggle />
           </div>
@@ -85,7 +85,7 @@ export default function RegisterPage() {
               Create Account
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Join UniCortex to get started.
+              Join Bichar Bebostha to get started.
             </p>
           </CardHeader>
           <CardContent>

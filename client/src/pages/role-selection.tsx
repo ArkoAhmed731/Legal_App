@@ -229,7 +229,7 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
           <div className="flex items-center justify-between gap-4 h-16">
             <div className="flex items-center gap-2">
               <Scale className="h-6 w-6 text-accent" />
-              <span className="font-serif text-xl font-bold" data-testid="text-role-logo">UniCortex</span>
+              <span className="font-serif text-xl font-bold" data-testid="text-role-logo">Bichar Bebostha</span>
             </div>
             <ThemeToggle />
           </div>
@@ -244,7 +244,7 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
             <>
               <div className="text-center space-y-3">
                 <h1 className="font-serif text-3xl sm:text-4xl font-bold" data-testid="text-role-title">
-                  How will you use UniCortex?
+                  How will you use Bichar Bebostha?
                 </h1>
                 <p className="text-muted-foreground text-base sm:text-lg max-w-xl mx-auto">
                   Choose how you'd like to get started. You can always change this later.

@@ -100,7 +100,7 @@ export function AppSidebar() {
         <div className="flex items-center gap-2">
           <Scale className="h-6 w-6 text-sidebar-primary" />
           <span className="font-serif text-lg font-bold text-sidebar-foreground">
-            UniCortex
+            Bichar Bebostha
           </span>
           <Badge
             variant="outline"

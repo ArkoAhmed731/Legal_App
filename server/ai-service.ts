@@ -11,7 +11,7 @@ function getOpenAI(): OpenAI {
   return _openai;
 }
 
-const SYSTEM_PROMPT = `You are UniCortex Legal Assistant, an AI that provides educational legal information.
+const SYSTEM_PROMPT = `You are Bichar Bebostha Legal Assistant, an AI that provides educational legal information.
 
 IMPORTANT RULES:
 1. You provide GENERAL legal education and information ONLY. You are NOT a lawyer and do NOT provide legal advice.

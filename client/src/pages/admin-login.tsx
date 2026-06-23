@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
           <div className="flex items-center justify-between gap-4 h-16">
             <div className="flex items-center gap-2">
               <Scale className="h-6 w-6 text-accent" />
-              <span className="font-serif text-xl font-bold">UniCortex</span>
+              <span className="font-serif text-xl font-bold">Bichar Bebostha</span>
               <Badge variant="secondary" className="text-xs">Admin</Badge>
             </div>
             <div className="flex items-center gap-2">

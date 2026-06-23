@@ -8,7 +8,7 @@ export const APP_CONFIG = {
   professionalLabelPlural: "Lawyers",
   dashboardSubtitle: "Here's an overview of your legal activity",
   dashboardDisclaimer: "Legal Disclaimer",
-  dashboardDisclaimerDetail: "UniCortex provides educational legal information only. This is not legal advice.",
+  dashboardDisclaimerDetail: "Bichar Bebostha provides educational legal information only. This is not legal advice.",
   dashboardCTALabel: "Ask AI",
   bookCTALabel: "Book a Consultation",
   bookingsSubtitle: "Manage your consultation appointments",
