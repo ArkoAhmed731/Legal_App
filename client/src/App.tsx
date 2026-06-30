@@ -30,6 +30,8 @@ import RegisterPage from "@/pages/register";
 import RoleSelectionPage from "@/pages/role-selection";
 import EditProfilePage from "@/pages/edit-profile";
 import VerificationLock from "@/components/verification-lock";
+import LawyerVideosPage from "@/pages/lawyer-videos";
+import LawyerEarningsPage from "@/pages/lawyer-earnings";
 import NotFound from "@/pages/not-found";
 
 const locationEvents = ["popstate", "pushState", "replaceState", "hashchange"];
@@ -45,6 +47,20 @@ function usePathname() {
 function Router() {
   const pathname = usePathname();
   const { isAdmin, isLawyer, isPendingVerification, verificationStatus } = useAuth();
+
+  // Admins have a dedicated portal — no access to client/lawyer pages
+  if (isAdmin) {
+    switch (pathname) {
+      case "/admin/users":
+        return <AdminUsersPage />;
+      case "/admin/analytics":
+        return <AnalyticsPage />;
+      case "/admin/audit-logs":
+        return <AuditLogsPage />;
+      default:
+        return <AdminPage />;
+    }
+  }
 
   const lockedRoutes = ["/ai-chat", "/lawyers", "/bookings", "/documents", "/videos",
     "/lawyer/appointments", "/lawyer/reviews"];
@@ -78,17 +94,13 @@ function Router() {
     case "/profile":
       return <EditProfilePage />;
     case "/lawyer/appointments":
-      return isLawyer || isAdmin ? <LawyerAppointmentsPage /> : <NotFound />;
+      return isLawyer ? <LawyerAppointmentsPage /> : <NotFound />;
     case "/lawyer/reviews":
-      return isLawyer || isAdmin ? <LawyerReviewPage /> : <NotFound />;
-    case "/admin":
-      return isAdmin ? <AdminPage /> : <NotFound />;
-    case "/admin/users":
-      return isAdmin ? <AdminUsersPage /> : <NotFound />;
-    case "/admin/analytics":
-      return isAdmin ? <AnalyticsPage /> : <NotFound />;
-    case "/admin/audit-logs":
-      return isAdmin ? <AuditLogsPage /> : <NotFound />;
+      return isLawyer ? <LawyerReviewPage /> : <NotFound />;
+    case "/lawyer/videos":
+      return isLawyer ? <LawyerVideosPage /> : <NotFound />;
+    case "/lawyer/earnings":
+      return isLawyer ? <LawyerEarningsPage /> : <NotFound />;
     default:
       return <NotFound />;
   }

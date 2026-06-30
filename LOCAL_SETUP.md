@@ -1,6 +1,6 @@
 # UniCortex — Local Development Setup
 
-This guide explains how to run UniCortex on your local machine without Replit.
+This guide explains how to run UniCortex on your local machine.
 
 ## Prerequisites
 

@@ -7,11 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Scale, Users, Briefcase, ArrowRight, ArrowLeft, MessageSquare, FileText, Calendar, ClipboardCheck, Shield, Loader2, Upload, CheckCircle, AlertCircle, Clock } from "lucide-react";
+import { Scale, Users, Briefcase, ArrowRight, ArrowLeft, MessageSquare, FileText, Calendar, ClipboardCheck, Shield, Loader2, Upload, CheckCircle, AlertCircle, Clock, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useUpload } from "@/hooks/use-upload";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface RoleSelectionProps {
   tenantSlug?: string;
@@ -36,7 +38,28 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
   const [yearsExperience, setYearsExperience] = useState("");
   const [bio, setBio] = useState("");
   const [jurisdictions, setJurisdictions] = useState("");
-  const [languages, setLanguages] = useState("");
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+
+  const YEARS_OPTIONS = [
+    { label: "Less than 1 year", value: "0" },
+    { label: "1–2 years", value: "1" },
+    { label: "3–5 years", value: "3" },
+    { label: "6–10 years", value: "6" },
+    { label: "11–15 years", value: "11" },
+    { label: "16–20 years", value: "16" },
+    { label: "20+ years", value: "20" },
+  ];
+
+  const LANGUAGE_OPTIONS = [
+    "English", "Bangla", "Hindi", "Urdu", "Arabic",
+    "French", "Spanish", "Chinese", "Portuguese", "Japanese",
+  ];
+
+  function toggleLanguage(lang: string) {
+    setSelectedLanguages(prev =>
+      prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
+    );
+  }
 
   const [licenseDocUrl, setLicenseDocUrl] = useState("");
   const [licenseFileName, setLicenseFileName] = useState("");
@@ -190,7 +213,7 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
       yearsExperience: parseInt(yearsExperience) || 0,
       bio: bio.trim(),
       jurisdictions: jurisdictions.split(",").map(j => j.trim()).filter(Boolean),
-      languages: languages.split(",").map(l => l.trim()).filter(Boolean),
+      languages: selectedLanguages,
       licenseDocUrl,
       govIdDocUrl,
     });
@@ -550,22 +573,48 @@ export default function RoleSelectionPage({ tenantSlug = "law", initialStep }: R
                         </div>
                         <div className="space-y-2">
                           <Label>Years of Experience</Label>
-                          <Input
-                            type="number"
-                            value={yearsExperience}
-                            onChange={(e) => setYearsExperience(e.target.value)}
-                            placeholder="e.g., 10"
-                            data-testid="input-years-experience"
-                          />
+                          <Select value={yearsExperience} onValueChange={setYearsExperience}>
+                            <SelectTrigger data-testid="select-years-experience">
+                              <SelectValue placeholder="Select range" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {YEARS_OPTIONS.map(opt => (
+                                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label>Languages (comma-separated)</Label>
-                          <Input
-                            value={languages}
-                            onChange={(e) => setLanguages(e.target.value)}
-                            placeholder="e.g., English, Spanish"
-                            data-testid="input-languages"
-                          />
+                          <Label>Languages</Label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="w-full justify-between font-normal h-9 px-3"
+                                data-testid="select-languages"
+                              >
+                                <span className="truncate text-sm">
+                                  {selectedLanguages.length > 0 ? selectedLanguages.join(", ") : "Select languages"}
+                                </span>
+                                <ChevronDown className="h-4 w-4 opacity-50 shrink-0 ml-2" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-56 p-1" align="start">
+                              {LANGUAGE_OPTIONS.map(lang => (
+                                <div
+                                  key={lang}
+                                  className="flex items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-accent cursor-pointer"
+                                  onClick={() => toggleLanguage(lang)}
+                                >
+                                  <Checkbox
+                                    checked={selectedLanguages.includes(lang)}
+                                    onCheckedChange={() => toggleLanguage(lang)}
+                                  />
+                                  <span className="text-sm">{lang}</span>
+                                </div>
+                              ))}
+                            </PopoverContent>
+                          </Popover>
                         </div>
                       </div>
                       <div className="space-y-2">

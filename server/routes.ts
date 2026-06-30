@@ -1,5 +1,8 @@
 import type { Express, RequestHandler } from "express";
 import { createServer, type Server } from "http";
+import path from "path";
+import fs from "fs";
+import { randomUUID } from "crypto";
 import { storage } from "./storage";
 import { isAuthenticated } from "./auth";
 import { streamLegalAssistant, generateDocumentDraft } from "./ai-service";
@@ -27,6 +30,50 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+
+  // --- File uploads (local dev: saves to uploads/ directory) ---
+  app.post("/api/uploads/request-url", isAuthenticated, (req, res) => {
+    try {
+      const { name, size, contentType } = req.body;
+      if (!name) return res.status(400).json({ message: "name is required" });
+      const uuid = randomUUID();
+      const safeName = path.basename(name as string);
+      const objectPath = `/objects/${uuid}/${safeName}`;
+      const uploadURL = `/api/uploads/store/${uuid}/${encodeURIComponent(safeName)}`;
+      res.json({ uploadURL, objectPath, metadata: { name: safeName, size: size || 0, contentType: contentType || "application/octet-stream" } });
+    } catch {
+      res.status(500).json({ message: "Failed to generate upload URL" });
+    }
+  });
+
+  app.put("/api/uploads/store/:uuid/:filename", async (req: any, res) => {
+    try {
+      const uuid = req.params.uuid;
+      const filename = path.basename(decodeURIComponent(req.params.filename));
+      const uploadDir = path.join(process.cwd(), "uploads", uuid);
+      await fs.promises.mkdir(uploadDir, { recursive: true });
+      const chunks: Buffer[] = [];
+      await new Promise<void>((resolve, reject) => {
+        req.on("data", (chunk: Buffer) => chunks.push(chunk));
+        req.on("end", resolve);
+        req.on("error", reject);
+      });
+      await fs.promises.writeFile(path.join(uploadDir, filename), Buffer.concat(chunks));
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Upload store error:", error);
+      res.status(500).json({ message: "Failed to store file" });
+    }
+  });
+
+  app.get("/objects/:uuid/:filename", (req: any, res) => {
+    const uuid = req.params.uuid;
+    const filename = path.basename(decodeURIComponent(req.params.filename));
+    const filePath = path.join(process.cwd(), "uploads", uuid, filename);
+    res.sendFile(filePath, { root: "/" }, (err) => {
+      if (err) res.status(404).json({ message: "File not found" });
+    });
+  });
 
   app.patch("/api/auth/profile-picture", isAuthenticated, async (req: any, res) => {
     try {
@@ -571,6 +618,74 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error deleting video:", error);
       res.status(500).json({ message: "Failed to delete video" });
+    }
+  });
+
+  app.post("/api/admin/videos/:id/approve", isAuthenticated, requireRole("tenant_admin"), async (req: any, res) => {
+    try {
+      await storage.updateVideoPublished(parseInt(req.params.id), true);
+      res.json({ message: "Video approved and published" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to approve video" });
+    }
+  });
+
+  app.post("/api/admin/videos/:id/reject", isAuthenticated, requireRole("tenant_admin"), async (req: any, res) => {
+    try {
+      await storage.deleteVideo(parseInt(req.params.id));
+      res.json({ message: "Video submission rejected and removed" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reject video" });
+    }
+  });
+
+  // --- Lawyer Video Submissions ---
+  app.get("/api/lawyer/videos", isAuthenticated, requireRole("professional"), async (req: any, res) => {
+    try {
+      const userId = getUserId(req);
+      const vids = await storage.getVideosByUser(userId);
+      res.json(vids);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch videos" });
+    }
+  });
+
+  app.post("/api/lawyer/videos", isAuthenticated, requireRole("professional"), async (req: any, res) => {
+    try {
+      const userId = getUserId(req);
+      const { title, description, videoUrl, category, duration, jurisdiction, language } = req.body;
+      if (!title || !videoUrl || !category) {
+        return res.status(400).json({ message: "Title, video URL, and category are required" });
+      }
+      const video = await storage.createVideo({
+        title,
+        description: description || null,
+        videoUrl,
+        thumbnailUrl: null,
+        category,
+        duration: duration ? parseInt(duration) : null,
+        jurisdiction: jurisdiction || null,
+        language: language || "en",
+        isPublished: false,
+        submittedByUserId: userId,
+      });
+      res.status(201).json(video);
+    } catch (error) {
+      console.error("Error submitting video:", error);
+      res.status(500).json({ message: "Failed to submit video" });
+    }
+  });
+
+  // --- Lawyer Earnings ---
+  app.get("/api/lawyer/earnings", isAuthenticated, requireRole("professional"), async (req: any, res) => {
+    try {
+      const userId = getUserId(req);
+      const prof = await storage.getProfessionalByUserId(userId);
+      if (!prof) return res.status(404).json({ message: "Professional profile not found" });
+      const earnings = await storage.getLawyerEarnings(prof.id);
+      res.json(earnings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch earnings" });
     }
   });
 

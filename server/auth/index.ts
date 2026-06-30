@@ -135,6 +135,38 @@ export function registerAuthRoutes(app: Express): void {
     });
   });
 
+  app.post("/api/auth/select-role", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+      const { role, fullName, dateOfBirth, emailAddress, phone, address } = req.body;
+
+      if (!role || !["client", "professional"].includes(role)) {
+        return res.status(400).json({ message: "Valid role is required" });
+      }
+      if (!fullName || !dateOfBirth || !emailAddress || !phone || !address) {
+        return res.status(400).json({ message: "All personal details are required" });
+      }
+
+      await storage.upsertUserProfile({
+        userId,
+        role: role as "client" | "professional",
+        fullName,
+        dateOfBirth,
+        emailAddress,
+        phone,
+        address,
+        onboardingComplete: role === "client",
+      });
+
+      res.json({ message: "Role selected", role });
+    } catch (error) {
+      console.error("select-role error:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
     try {
       const user = req.user;

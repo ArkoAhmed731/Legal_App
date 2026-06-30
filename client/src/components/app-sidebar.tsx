@@ -15,6 +15,8 @@ import {
   Scale,
   UserPen,
   Lock,
+  Upload,
+  DollarSign,
 } from "lucide-react";
 import {
   Sidebar,
@@ -79,6 +81,8 @@ export function AppSidebar() {
   const lawyerMenu = [
     { title: "My Appointments", url: "/lawyer/appointments", icon: Calendar, show: hasFeature("APPOINTMENTS_ENABLED") },
     { title: "Document Reviews", url: "/lawyer/reviews", icon: ClipboardCheck, show: hasFeature("DOCUMENT_SYSTEM_ENABLED") },
+    { title: "Upload Videos", url: "/lawyer/videos", icon: Upload, show: true },
+    { title: "My Earnings", url: "/lawyer/earnings", icon: DollarSign, show: true },
   ].filter((item) => item.show);
 
   const adminMenu = [
@@ -95,12 +99,14 @@ export function AppSidebar() {
 
   const isActive = (url: string) => currentPath === url || currentPath.startsWith(url + "/");
 
+  const logoTarget = isAdmin ? "/admin" : "/dashboard";
+
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
         <div
           className="flex items-center gap-2 cursor-pointer"
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate(logoTarget)}
         >
           <Scale className="h-6 w-6 text-sidebar-primary" />
           <span className="font-serif text-lg font-bold text-sidebar-foreground">
@@ -116,35 +122,42 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/50 text-xs uppercase tracking-wider">
-            Main
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {clientMenu.map((item) => {
-                const isLocked = lockedPaths.includes(item.url);
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(item.url)}
-                      data-testid={`nav-${item.title.toLowerCase().replace(/\s/g, "-")}`}
-                    >
-                      <a href={item.url} onClick={(e) => handleNav(e, item.url)} className={isLocked ? "opacity-50" : ""}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                        {isLocked && <Lock className="h-3 w-3 ml-auto text-muted-foreground" />}
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Client nav — only for non-admin, non-lawyer users */}
+        {!isAdmin && !isLawyer && (
+          <>
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-sidebar-foreground/50 text-xs uppercase tracking-wider">
+                Main
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {clientMenu.map((item) => {
+                    const isLocked = lockedPaths.includes(item.url);
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={isActive(item.url)}
+                          data-testid={`nav-${item.title.toLowerCase().replace(/\s/g, "-")}`}
+                        >
+                          <a href={item.url} onClick={(e) => handleNav(e, item.url)} className={isLocked ? "opacity-50" : ""}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                            {isLocked && <Lock className="h-3 w-3 ml-auto text-muted-foreground" />}
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
 
-        {isLawyer && lawyerMenu.length > 0 && (
+          </>
+        )}
+
+        {/* Lawyer nav — only for lawyers */}
+        {!isAdmin && isLawyer && lawyerMenu.length > 0 && (
           <SidebarGroup>
             <SidebarGroupLabel className="text-sidebar-foreground/50 text-xs uppercase tracking-wider">
               Lawyer
@@ -156,26 +169,33 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {lawyerMenu.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(item.url)}
-                      data-testid={`nav-${item.title.toLowerCase().replace(/\s/g, "-")}`}
-                    >
-                      <a href={item.url} onClick={(e) => handleNav(e, item.url)} className={isPendingVerification ? "opacity-50" : ""}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                        {isPendingVerification && <Lock className="h-3 w-3 ml-auto text-muted-foreground" />}
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {lawyerMenu.map((item) => {
+                  const lockedLawyerPaths = isPendingVerification
+                    ? ["/lawyer/appointments", "/lawyer/reviews"]
+                    : [];
+                  const isLocked = lockedLawyerPaths.includes(item.url);
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive(item.url)}
+                        data-testid={`nav-${item.title.toLowerCase().replace(/\s/g, "-")}`}
+                      >
+                        <a href={item.url} onClick={(e) => handleNav(e, item.url)} className={isLocked ? "opacity-50" : ""}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                          {isLocked && <Lock className="h-3 w-3 ml-auto text-muted-foreground" />}
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         )}
 
+        {/* Admin-only nav */}
         {isAdmin && (
           <SidebarGroup>
             <SidebarGroupLabel className="text-sidebar-foreground/50 text-xs uppercase tracking-wider">
@@ -226,14 +246,16 @@ export function AppSidebar() {
             </p>
           </div>
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e: React.MouseEvent) => { e.preventDefault(); handleNav(e, "/profile"); }}
-              data-testid="button-edit-profile"
-            >
-              <UserPen className="h-4 w-4 text-sidebar-foreground/50" />
-            </Button>
+            {!isAdmin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e: React.MouseEvent) => { e.preventDefault(); handleNav(e, "/profile"); }}
+                data-testid="button-edit-profile"
+              >
+                <UserPen className="h-4 w-4 text-sidebar-foreground/50" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"

@@ -85,8 +85,11 @@ export interface IStorage {
 
   getVideos(): Promise<Video[]>;
   getAllVideos(): Promise<Video[]>;
+  getVideosByUser(userId: string): Promise<Video[]>;
   createVideo(video: InsertVideo): Promise<Video>;
   deleteVideo(id: number): Promise<void>;
+  updateVideoPublished(id: number, isPublished: boolean): Promise<void>;
+  getLawyerEarnings(profId: number): Promise<{ total: string; completed: number; pending: number; appointments: any[] }>;
 
   getAdminStats(): Promise<{
     totalLawyers: number;
@@ -596,6 +599,40 @@ export class DatabaseStorage implements IStorage {
 
   async deleteVideo(id: number): Promise<void> {
     await db.delete(videos).where(eq(videos.id, id));
+  }
+
+  async getVideosByUser(userId: string): Promise<Video[]> {
+    return db.select().from(videos).where(eq(videos.submittedByUserId, userId)).orderBy(desc(videos.createdAt));
+  }
+
+  async updateVideoPublished(id: number, isPublished: boolean): Promise<void> {
+    await db.update(videos).set({ isPublished }).where(eq(videos.id, id));
+  }
+
+  async getLawyerEarnings(profId: number) {
+    const appts = await db
+      .select({
+        id: appointments.id,
+        serviceType: appointments.serviceType,
+        status: appointments.status,
+        scheduledDate: appointments.scheduledDate,
+        amount: appointments.amount,
+        clientId: appointments.clientId,
+      })
+      .from(appointments)
+      .where(eq(appointments.professionalId, profId))
+      .orderBy(desc(appointments.scheduledDate));
+
+    const completed = appts.filter(a => a.status === "completed");
+    const pending = appts.filter(a => ["hold", "confirmed"].includes(a.status));
+    const total = completed.reduce((sum, a) => sum + parseFloat(a.amount || "0"), 0);
+
+    return {
+      total: total.toFixed(2),
+      completed: completed.length,
+      pending: pending.length,
+      appointments: appts.slice(0, 20),
+    };
   }
 
   async getAdminStats() {

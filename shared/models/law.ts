@@ -211,6 +211,7 @@ export const videos = pgTable("videos", {
   jurisdiction: varchar("jurisdiction"),
   language: varchar("language").default("en"),
   isPublished: boolean("is_published").default(true),
+  submittedByUserId: varchar("submitted_by_user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

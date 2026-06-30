@@ -14,6 +14,8 @@ import {
   Video,
   Clock,
   TrendingUp,
+  ShieldAlert,
+  ShieldX,
 } from "lucide-react";
 import { APP_CONFIG } from "@/lib/app-config";
 interface Appointment {
@@ -40,7 +42,7 @@ interface LegalDoc {
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isPendingVerification, verificationStatus } = useAuth();
   const DisclaimerIcon = APP_CONFIG.icon;
 
   const { data: appointments, isLoading: loadingAppts } = useQuery<Appointment[]>({
@@ -66,6 +68,34 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 space-y-8 max-w-6xl mx-auto">
+      {isPendingVerification && verificationStatus === "pending" && (
+        <div className="flex items-start gap-4 rounded-lg border border-amber-500/30 bg-amber-500/8 px-5 py-4">
+          <ShieldAlert className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+              Account Verification Pending
+            </p>
+            <p className="text-sm text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
+              Your professional credentials are currently under review by our compliance team. This process typically takes up to 24 hours. In the meantime, you are welcome to explore the platform. Full access to appointments, document reviews, and your public profile will be activated upon successful verification.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {isPendingVerification && verificationStatus === "rejected" && (
+        <div className="flex items-start gap-4 rounded-lg border border-destructive/30 bg-destructive/8 px-5 py-4">
+          <ShieldX className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <p className="text-sm font-semibold text-destructive">
+              Verification Unsuccessful
+            </p>
+            <p className="text-sm text-destructive/80 leading-relaxed">
+              Unfortunately, your verification application was not approved. This may be due to incomplete or unreadable documentation. Please contact our support team or re-submit updated credentials to proceed.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-1">
         <h1 className="font-serif text-2xl font-bold" data-testid="text-dashboard-title">
           Welcome back, {user?.firstName || "there"}

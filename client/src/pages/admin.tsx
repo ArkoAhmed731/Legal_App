@@ -100,6 +100,7 @@ interface VideoItem {
   language: string | null;
   isPublished: boolean | null;
   createdAt: string | null;
+  submittedByUserId: string | null;
 }
 
 const videoCategories = [
@@ -241,6 +242,33 @@ export default function AdminPage() {
       toast({ title: "Video Deleted" });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/videos"] });
       queryClient.invalidateQueries({ queryKey: ["/api/videos"] });
+    },
+    onError: (err: Error) => {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const approveVideoMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("POST", `/api/admin/videos/${id}/approve`);
+    },
+    onSuccess: () => {
+      toast({ title: "Video Approved", description: "The submission has been published to the video library." });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/videos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/videos"] });
+    },
+    onError: (err: Error) => {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const rejectVideoMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("POST", `/api/admin/videos/${id}/reject`);
+    },
+    onSuccess: () => {
+      toast({ title: "Submission Rejected", description: "The video submission has been removed." });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/videos"] });
     },
     onError: (err: Error) => {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -608,11 +636,94 @@ export default function AdminPage() {
             </Dialog>
           </div>
 
+          {/* Pending lawyer submissions */}
+          {(() => {
+            const pendingSubmissions = adminVideos?.filter(
+              (v) => v.isPublished === false && v.submittedByUserId != null
+            ) ?? [];
+            if (loadingVideos || pendingSubmissions.length === 0) return null;
+            return (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-amber-500" />
+                  <h3 className="text-sm font-semibold">
+                    Pending Submissions
+                    <Badge className="ml-2 text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20">
+                      {pendingSubmissions.length}
+                    </Badge>
+                  </h3>
+                </div>
+                {pendingSubmissions.map((video) => (
+                  <Card key={`pending-${video.id}`} className="border-amber-500/20 bg-amber-500/5">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center shrink-0">
+                            <Video className="h-5 w-5 text-muted-foreground" />
+                          </div>
+                          <div className="min-w-0 space-y-1">
+                            <h3 className="text-sm font-medium truncate">{video.title}</h3>
+                            {video.description && (
+                              <p className="text-xs text-muted-foreground line-clamp-1">{video.description}</p>
+                            )}
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge variant="secondary" className="text-[10px]">{video.category}</Badge>
+                              {video.duration && (
+                                <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                                  <Clock className="h-2.5 w-2.5" />
+                                  {formatDuration(video.duration)}
+                                </span>
+                              )}
+                              {video.jurisdiction && (
+                                <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                                  <Globe className="h-2.5 w-2.5" />
+                                  {video.jurisdiction}
+                                </span>
+                              )}
+                              <span className="text-[10px] text-muted-foreground">
+                                Submitted {video.createdAt ? new Date(video.createdAt).toLocaleDateString() : "—"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 text-xs border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10"
+                            disabled={approveVideoMutation.isPending || rejectVideoMutation.isPending}
+                            onClick={() => approveVideoMutation.mutate(video.id)}
+                          >
+                            <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 text-xs border-destructive/40 text-destructive hover:bg-destructive/10"
+                            disabled={approveVideoMutation.isPending || rejectVideoMutation.isPending}
+                            onClick={() => rejectVideoMutation.mutate(video.id)}
+                          >
+                            <XCircle className="h-3.5 w-3.5 mr-1" />
+                            Reject
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                <div className="border-t pt-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Published Library</p>
+                </div>
+              </div>
+            );
+          })()}
+
           {loadingVideos ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)}
             </div>
-          ) : adminVideos?.length === 0 ? (
+          ) : adminVideos?.filter(v => !(v.isPublished === false && v.submittedByUserId != null)).length === 0 ? (
             <div className="text-center py-12 space-y-3">
               <Video className="h-10 w-10 text-muted-foreground/40 mx-auto" />
               <p className="text-muted-foreground text-sm">No videos uploaded yet</p>
@@ -621,7 +732,7 @@ export default function AdminPage() {
               </Button>
             </div>
           ) : (
-            adminVideos?.map((video) => (
+            adminVideos?.filter(v => !(v.isPublished === false && v.submittedByUserId != null)).map((video) => (
               <Card key={video.id} data-testid={`card-admin-video-${video.id}`}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-4">

@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
       }
 
       queryClient.clear();
-      window.location.href = "/";
+      window.location.href = "/admin";
     } catch {
       setError("Network error. Please try again.");
       setLoading(false);
