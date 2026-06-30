@@ -391,6 +391,28 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/documents/:id/download", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = getUserId(req);
+      const docId = parseInt(req.params.id);
+      const doc = await storage.getDocument(docId);
+      if (!doc || doc.clientId !== userId) {
+        return res.status(403).json({ message: "Not authorized" });
+      }
+      const content = doc.finalContent || doc.currentDraft;
+      if (!content) {
+        return res.status(404).json({ message: "No document content available" });
+      }
+      const filename = `legal-document-${docId}.txt`;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      res.send(content);
+    } catch (error) {
+      console.error("Error downloading document:", error);
+      res.status(500).json({ message: "Failed to download document" });
+    }
+  });
+
   // --- AI Chat ---
   app.get("/api/ai/conversations", isAuthenticated, async (req: any, res) => {
     try {

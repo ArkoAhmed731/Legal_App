@@ -334,8 +334,13 @@ export default function DocumentsPage() {
                         Make Changes
                       </Button>
                     )}
-                    {doc.status === "delivered" && (
-                      <Button size="sm" variant="outline" data-testid={`button-download-doc-${doc.id}`}>
+                    {(doc.status === "finalized" || doc.status === "delivered") && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => window.open(`/api/documents/${doc.id}/download`, "_blank")}
+                        data-testid={`button-download-doc-${doc.id}`}
+                      >
                         <Download className="h-3 w-3 mr-1" />
                         Download
                       </Button>
