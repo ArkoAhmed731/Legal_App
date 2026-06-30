@@ -39,6 +39,8 @@ import {
   Loader2,
   Globe,
   BookOpen,
+  Upload,
+  Scale,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -103,6 +105,15 @@ interface VideoItem {
   submittedByUserId: string | null;
 }
 
+interface LawDocument {
+  id: number;
+  title: string;
+  filename: string;
+  fileSize: number | null;
+  chunkCount: number | null;
+  uploadedAt: string | null;
+}
+
 const videoCategories = [
   "Employment",
   "Family Law",
@@ -133,6 +144,9 @@ export default function AdminPage() {
     language: "en",
   });
 
+  const [lawDocTitle, setLawDocTitle] = useState("");
+  const [lawDocUploading, setLawDocUploading] = useState(false);
+
   const { data: stats, isLoading: loadingStats } = useQuery<AdminStats>({
     queryKey: ["/api/admin/stats"],
   });
@@ -152,6 +166,59 @@ export default function AdminPage() {
   const { data: adminDocuments, isLoading: loadingDocuments } = useQuery<AdminDocument[]>({
     queryKey: ["/api/admin/documents"],
   });
+
+  const { data: lawDocs, isLoading: loadingLawDocs } = useQuery<LawDocument[]>({
+    queryKey: ["/api/admin/law-documents"],
+  });
+
+  const deleteLawDocMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/admin/law-documents/${id}`);
+    },
+    onSuccess: () => {
+      toast({ title: "Document Removed", description: "The law document and its embeddings have been deleted." });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/law-documents"] });
+    },
+    onError: (err: Error) => {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const handleLawDocUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!lawDocTitle.trim()) {
+      toast({ title: "Title Required", description: "Please enter a title before uploading.", variant: "destructive" });
+      return;
+    }
+    setLawDocUploading(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(",")[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const res = await apiRequest("POST", "/api/admin/law-documents", {
+        title: lawDocTitle.trim(),
+        filename: file.name,
+        mimeType: file.type,
+        content: base64,
+      });
+      const data = await res.json();
+      toast({ title: "Document Processed", description: `"${data.title}" indexed with ${data.chunkCount} chunks. The AI assistant can now reference it.` });
+      setLawDocTitle("");
+      e.target.value = "";
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/law-documents"] });
+    } catch (err: any) {
+      toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
+    } finally {
+      setLawDocUploading(false);
+    }
+  };
 
   const assignLawyerMutation = useMutation({
     mutationFn: async ({ docId, lawyerId }: { docId: number; lawyerId: number }) => {
@@ -359,6 +426,10 @@ export default function AdminPage() {
           <TabsTrigger value="documents" data-testid="tab-documents">
             <FileText className="h-3 w-3 mr-1" />
             Documents ({adminDocuments?.length || 0})
+          </TabsTrigger>
+          <TabsTrigger value="law-docs" data-testid="tab-law-docs">
+            <Scale className="h-3 w-3 mr-1" />
+            Law Docs ({lawDocs?.length || 0})
           </TabsTrigger>
         </TabsList>
 
@@ -899,6 +970,100 @@ export default function AdminPage() {
                 </CardContent>
               </Card>
             ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="law-docs" className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Upload Bangladesh law documents (PDF or TXT). The AI assistant will reference them when answering user questions.
+            </p>
+            <Card className="border-dashed">
+              <CardContent className="p-4 space-y-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="law-doc-title" className="text-sm">Document Title <span className="text-destructive">*</span></Label>
+                  <Input
+                    id="law-doc-title"
+                    placeholder="e.g., Bangladesh Contract Act 1872"
+                    value={lawDocTitle}
+                    onChange={(e) => setLawDocTitle(e.target.value)}
+                    disabled={lawDocUploading}
+                    data-testid="input-law-doc-title"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">File (PDF or TXT)</Label>
+                  <div className="flex items-center gap-3">
+                    <label className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm cursor-pointer transition-colors ${lawDocUploading ? "opacity-50 cursor-not-allowed" : "hover:bg-muted"}`}>
+                      {lawDocUploading ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" />Processing & Embedding...</>
+                      ) : (
+                        <><Upload className="h-4 w-4" />Choose File</>
+                      )}
+                      <input
+                        type="file"
+                        accept=".pdf,.txt"
+                        className="sr-only"
+                        disabled={lawDocUploading}
+                        onChange={handleLawDocUpload}
+                        data-testid="input-law-doc-file"
+                      />
+                    </label>
+                    <p className="text-xs text-muted-foreground">Accepts .pdf and .txt — max 20 MB</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {loadingLawDocs ? (
+            <div className="space-y-2">
+              {[1, 2].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
+            </div>
+          ) : lawDocs?.length === 0 ? (
+            <div className="text-center py-10">
+              <Scale className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">No law documents uploaded yet</p>
+              <p className="text-xs text-muted-foreground mt-1">Upload Bangladesh acts, regulations, or case law above</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {lawDocs?.map((doc) => (
+                <Card key={doc.id} data-testid={`card-law-doc-${doc.id}`}>
+                  <CardContent className="p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-9 w-9 rounded-md bg-blue-500/10 flex items-center justify-center shrink-0">
+                        <Scale className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{doc.title}</p>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                          <span>{doc.filename}</span>
+                          {doc.chunkCount != null && (
+                            <Badge variant="secondary" className="text-[10px]">{doc.chunkCount} chunks</Badge>
+                          )}
+                          {doc.fileSize != null && (
+                            <span>{(doc.fileSize / 1024).toFixed(1)} KB</span>
+                          )}
+                          {doc.uploadedAt && (
+                            <span>{new Date(doc.uploadedAt).toLocaleDateString()}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled={deleteLawDocMutation.isPending}
+                      onClick={() => deleteLawDocMutation.mutate(doc.id)}
+                      data-testid={`button-delete-law-doc-${doc.id}`}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           )}
         </TabsContent>
       </Tabs>

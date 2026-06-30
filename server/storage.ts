@@ -16,6 +16,8 @@ import {
   videos,
   videoProgress,
   auditLogs,
+  lawDocuments,
+  lawDocumentChunks,
   type UserProfile,
   type InsertUserProfile,
   type Professional,
@@ -37,6 +39,7 @@ import {
   type VideoProgress,
   type AuditLog,
   type InsertAuditLog,
+  type LawDocument,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -121,6 +124,13 @@ export interface IStorage {
 
   createAuditLog(log: InsertAuditLog): Promise<AuditLog>;
   getAuditLogs(limit?: number): Promise<AuditLog[]>;
+
+  getLawDocuments(): Promise<LawDocument[]>;
+  createLawDocument(doc: { title: string; filename: string; fileSize: number }): Promise<LawDocument>;
+  updateLawDocumentChunkCount(id: number, count: number): Promise<void>;
+  deleteLawDocument(id: number): Promise<void>;
+  createLawDocumentChunk(chunk: { documentId: number; chunkIndex: number; content: string; embedding: number[] }): Promise<void>;
+  searchSimilarChunks(queryEmbedding: number[], limit: number): Promise<{ content: string; similarity: number }[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -775,6 +785,63 @@ export class DatabaseStorage implements IStorage {
   async getAuditLogs(limit = 100): Promise<AuditLog[]> {
     return db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(limit);
   }
+
+  async getLawDocuments(): Promise<LawDocument[]> {
+    return db.select().from(lawDocuments).orderBy(desc(lawDocuments.uploadedAt));
+  }
+
+  async createLawDocument(doc: { title: string; filename: string; fileSize: number }): Promise<LawDocument> {
+    const [created] = await db.insert(lawDocuments).values(doc).returning();
+    return created;
+  }
+
+  async updateLawDocumentChunkCount(id: number, count: number): Promise<void> {
+    await db.update(lawDocuments).set({ chunkCount: count }).where(eq(lawDocuments.id, id));
+  }
+
+  async deleteLawDocument(id: number): Promise<void> {
+    await db.delete(lawDocuments).where(eq(lawDocuments.id, id));
+  }
+
+  async createLawDocumentChunk(chunk: { documentId: number; chunkIndex: number; content: string; embedding: number[] }): Promise<void> {
+    await db.insert(lawDocumentChunks).values({
+      documentId: chunk.documentId,
+      chunkIndex: chunk.chunkIndex,
+      content: chunk.content,
+      embedding: chunk.embedding,
+    });
+  }
+
+  async searchSimilarChunks(queryEmbedding: number[], limit: number): Promise<{ content: string; similarity: number }[]> {
+    const allChunks = await db
+      .select({ content: lawDocumentChunks.content, embedding: lawDocumentChunks.embedding })
+      .from(lawDocumentChunks)
+      .where(sql`${lawDocumentChunks.embedding} is not null`);
+
+    if (allChunks.length === 0) return [];
+
+    const withSimilarity = allChunks
+      .map((chunk) => ({
+        content: chunk.content,
+        similarity: cosineSimilarity(queryEmbedding, chunk.embedding as number[]),
+      }))
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, limit);
+
+    return withSimilarity;
+  }
+}
+
+function cosineSimilarity(a: number[], b: number[]): number {
+  if (!a || !b || a.length !== b.length) return 0;
+  let dot = 0, magA = 0, magB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    magA += a[i] * a[i];
+    magB += b[i] * b[i];
+  }
+  const denom = Math.sqrt(magA) * Math.sqrt(magB);
+  return denom === 0 ? 0 : dot / denom;
 }
 
 export const storage = new DatabaseStorage();

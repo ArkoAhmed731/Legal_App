@@ -295,6 +295,27 @@ export type Video = typeof videos.$inferSelect;
 export type InsertVideo = z.infer<typeof insertVideoSchema>;
 export type VideoProgress = typeof videoProgress.$inferSelect;
 
+export const lawDocuments = pgTable("law_documents", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  filename: varchar("filename").notNull(),
+  fileSize: integer("file_size"),
+  chunkCount: integer("chunk_count").default(0),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+});
+
+export const lawDocumentChunks = pgTable("law_document_chunks", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").notNull().references(() => lawDocuments.id, { onDelete: "cascade" }),
+  chunkIndex: integer("chunk_index").notNull(),
+  content: text("content").notNull(),
+  embedding: jsonb("embedding").$type<number[]>(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type LawDocument = typeof lawDocuments.$inferSelect;
+export type LawDocumentChunk = typeof lawDocumentChunks.$inferSelect;
+
 export const auditLogs = pgTable("audit_logs", {
   id: serial("id").primaryKey(),
   actorId: varchar("actor_id"),

@@ -5,7 +5,21 @@ import fs from "fs";
 import { randomUUID } from "crypto";
 import { storage } from "./storage";
 import { isAuthenticated } from "./auth";
-import { streamLegalAssistant, generateDocumentDraft } from "./ai-service";
+import { streamLegalAssistant, generateDocumentDraft, embedText, embedTexts } from "./ai-service";
+
+function chunkText(text: string, chunkSize = 1500, overlap = 200): string[] {
+  const normalized = text.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n");
+  const chunks: string[] = [];
+  let start = 0;
+  while (start < normalized.length) {
+    const end = Math.min(start + chunkSize, normalized.length);
+    const chunk = normalized.slice(start, end).trim();
+    if (chunk.length > 50) chunks.push(chunk);
+    if (end === normalized.length) break;
+    start = end - overlap;
+  }
+  return chunks;
+}
 
 function getUserId(req: any): string {
   return req.user?.id;
@@ -480,6 +494,18 @@ export async function registerRoutes(
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Connection", "keep-alive");
 
+      let ragContext: string | undefined;
+      try {
+        const queryEmbedding = await embedText(content);
+        const chunks = await storage.searchSimilarChunks(queryEmbedding, 5);
+        const relevant = chunks.filter((c) => c.similarity > 0.4);
+        if (relevant.length > 0) {
+          ragContext = relevant.map((c, i) => `[${i + 1}] ${c.content}`).join("\n\n---\n\n");
+        }
+      } catch (ragErr) {
+        console.error("RAG retrieval failed (non-fatal):", ragErr);
+      }
+
       let fullResponse = "";
       let escalation: string | undefined;
 
@@ -491,7 +517,7 @@ export async function registerRoutes(
           escalation = data.escalation;
         }
         res.write(`data: ${JSON.stringify(data)}\n\n`);
-      });
+      }, ragContext);
 
       await storage.createMessage({
         conversationId,
@@ -875,6 +901,70 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error deleting professional:", error);
       res.status(500).json({ message: "Failed to delete professional" });
+    }
+  });
+
+  // === Law Documents (RAG) ===
+  app.get("/api/admin/law-documents", isAuthenticated, requireRole("tenant_admin"), async (_req, res) => {
+    try {
+      const docs = await storage.getLawDocuments();
+      res.json(docs);
+    } catch (error) {
+      console.error("Error fetching law documents:", error);
+      res.status(500).json({ message: "Failed to fetch law documents" });
+    }
+  });
+
+  app.post("/api/admin/law-documents", isAuthenticated, requireRole("tenant_admin"), async (req: any, res) => {
+    try {
+      const { title, filename, content: base64Content, mimeType } = req.body;
+      if (!title || !filename || !base64Content) {
+        return res.status(400).json({ message: "title, filename, and content are required" });
+      }
+
+      const buffer = Buffer.from(base64Content, "base64");
+
+      let text = "";
+      if (mimeType === "application/pdf" || filename.toLowerCase().endsWith(".pdf")) {
+        const pdfParse = (await import("pdf-parse/lib/pdf-parse.js")).default;
+        const parsed = await pdfParse(buffer);
+        text = parsed.text;
+      } else {
+        text = buffer.toString("utf-8");
+      }
+
+      if (!text.trim()) {
+        return res.status(400).json({ message: "No text could be extracted from the document" });
+      }
+
+      const chunks = chunkText(text);
+      const doc = await storage.createLawDocument({ title, filename, fileSize: buffer.length });
+
+      const embeddings = await embedTexts(chunks);
+      for (let i = 0; i < chunks.length; i++) {
+        await storage.createLawDocumentChunk({
+          documentId: doc.id,
+          chunkIndex: i,
+          content: chunks[i],
+          embedding: embeddings[i],
+        });
+      }
+
+      await storage.updateLawDocumentChunkCount(doc.id, chunks.length);
+      res.status(201).json({ ...doc, chunkCount: chunks.length });
+    } catch (error) {
+      console.error("Error processing law document:", error);
+      res.status(500).json({ message: "Failed to process document" });
+    }
+  });
+
+  app.delete("/api/admin/law-documents/:id", isAuthenticated, requireRole("tenant_admin"), async (req: any, res) => {
+    try {
+      await storage.deleteLawDocument(parseInt(req.params.id));
+      res.json({ message: "Law document deleted" });
+    } catch (error) {
+      console.error("Error deleting law document:", error);
+      res.status(500).json({ message: "Failed to delete law document" });
     }
   });
 

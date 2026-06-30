@@ -31,12 +31,39 @@ IMPORTANT RULES:
 9. When explaining, use simple language. Avoid unnecessary legal jargon.
 10. Keep responses focused and practical. Provide actionable next steps when possible.`;
 
+export async function embedText(text: string): Promise<number[]> {
+  const res = await getOpenAI().embeddings.create({
+    model: "text-embedding-3-small",
+    input: text.slice(0, 8000),
+  });
+  return res.data[0].embedding;
+}
+
+export async function embedTexts(texts: string[]): Promise<number[][]> {
+  const BATCH = 100;
+  const results: number[][] = [];
+  for (let i = 0; i < texts.length; i += BATCH) {
+    const batch = texts.slice(i, i + BATCH);
+    const res = await getOpenAI().embeddings.create({
+      model: "text-embedding-3-small",
+      input: batch,
+    });
+    results.push(...res.data.sort((a, b) => a.index - b.index).map((d) => d.embedding));
+  }
+  return results;
+}
+
 export async function streamLegalAssistant(
   messages: Array<{ role: string; content: string }>,
-  onChunk: (data: { content?: string; done?: boolean; escalation?: string }) => void
+  onChunk: (data: { content?: string; done?: boolean; escalation?: string }) => void,
+  ragContext?: string
 ): Promise<void> {
+  const systemPrompt = ragContext
+    ? `${SYSTEM_PROMPT}\n\n## Relevant Bangladesh Law References\n\nThe following excerpts are from official Bangladesh legal documents. Use them to inform your response where applicable. Cite them when you do.\n\n${ragContext}`
+    : SYSTEM_PROMPT;
+
   const chatMessages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: systemPrompt },
     ...messages.map((m) => ({
       role: m.role as "user" | "assistant",
       content: m.content,
